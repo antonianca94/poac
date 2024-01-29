@@ -72,7 +72,28 @@ app.delete('/products/:id', async (req, res) => {
     }
 });
 
+app.get('/products/:id/edit', async (req, res) => {
+    const productId = req.params.id;
+    try {
+        const [product] = await executeQuery('SELECT * FROM products WHERE id = ?', [productId]);
+        res.render('products/edit', { pageTitle: 'Editar Produto', product });
+    } catch (error) {
+        res.status(500).send('Erro ao buscar produto para edição');
+    }
+});
+
+app.post('/products/:id', async (req, res) => {
+    const productId = req.params.id;
+    const { name, price } = req.body;
+    try {
+        await executeQuery('UPDATE products SET name = ?, price = ? WHERE id = ?', [name, price, productId]);
+        req.flash('success', 'Produto atualizado com sucesso!');
+        res.redirect('/products');
+    } catch (error) {
+        res.status(500).send('Erro ao atualizar produto');
+    }
+});
 
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`O servidor está em execução http://localhost:${PORT}`);
 });

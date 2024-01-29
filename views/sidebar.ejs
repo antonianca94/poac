@@ -2,13 +2,21 @@
     <div class="d-flex flex-column flex-shrink-0 p-3 bg-white" style="width: 280px;">
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-            <a href="#" class="nav-link active" aria-current="page">
-                Home
-            </a>
+                <a href="#" class="nav-link" aria-current="page">
+                    <i class="bi bi-house"></i>
+                    Home
+                </a>
             </li>
             <li class="nav-item">
-                <a href="/products" class="nav-link" aria-current="page">
+                <a href="/products" class="nav-link <%= pageTitle === 'Produtos' ? 'active' : '' %>" aria-current="page">
+                    <i class="bi bi-bag"></i>
                     Produtos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="/users" class="nav-link" aria-current="page">
+                    <i class="bi bi-people"></i>
+                    Usuários
                 </a>
             </li>
         </ul>
