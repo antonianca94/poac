@@ -20,10 +20,6 @@ app.use(session({
 
 app.use(flash());
 
-
-
-
-
 // Inicialização do Passport.js
 app.use(passport.initialize());
 app.use(passport.session());
@@ -79,7 +75,7 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-
+// LOGIN USER
 // Rota de login
 app.post('/login', passport.authenticate('local', {
     successRedirect: '/products',
@@ -92,8 +88,9 @@ app.get('/login', (req, res) => {
     // Renderiza o arquivo login.ejs
     res.render('login', { message: req.flash('error') });
 });
+// LOGIN USER
 
-
+// REGISTRO USER
 // Rota para renderizar o formulário de cadastro de usuário
 app.get('/register', (req, res) => {
     res.render('register', { message: req.flash('error') });
@@ -120,7 +117,7 @@ app.post('/register', async (req, res) => {
         res.status(500).send('Erro ao cadastrar usuário');
     }
 });
-
+// REGISTRO USER
 
 // Middleware para verificar autenticação
 const isAuthenticated = (req, res, next) => {
@@ -149,6 +146,7 @@ async function executeQuery(sql, values = []) {
     }
 }
 
+// PRODUCTS
 app.get('/products', isAuthenticated, async (req, res) => {
     try {
         const products = await executeQuery('SELECT * FROM products');
@@ -214,8 +212,76 @@ app.post('/products/:id', async (req, res) => {
         res.status(500).send('Erro ao atualizar produto');
     }
 });
+// PRODUCTS
 
+// ROLES
+app.get('/roles', isAuthenticated, async (req, res) => {
+    try {
+        const roles = await executeQuery('SELECT * FROM roles');
+        const successMessage = req.flash('success'); 
+        res.render('roles/index', { pageTitle: 'Roles', roles, successMessage, username: req.user.username });
 
+    } catch (error) {
+        res.status(500).send('Erro ao buscar roles');
+    }
+});
+
+app.get('/roles/new', isAuthenticated, (req, res) => {
+    res.render('roles/new', { pageTitle: 'Inserir Role' , username: req.user.username });
+});
+
+app.post('/roles', async (req, res) => {
+    const { name, description } = req.body;
+    const userId = req.session.passport.user; 
+
+    if (!userId) {
+        return res.status(401).send('Usuário não autenticado');
+    }
+
+    try {
+        await executeQuery('INSERT INTO roles (name, description) VALUES (?, ?)', [name, description]);
+        req.flash('success', 'Role cadastrada com sucesso!');
+        res.redirect('/roles');
+    } catch (error) {
+        console.error('Erro ao cadastrar a role:', error);
+        res.status(500).send('Erro ao cadastrar a role');
+    }
+});
+
+app.delete('/roles/:id', isAuthenticated, async (req, res) => {
+    const roleId = req.params.id;
+    try {
+        await executeQuery('DELETE FROM roles WHERE id = ?', [roleId]);
+        res.status(200).json({ message: 'Role excluída com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao excluir a role:', error);
+        res.status(500).json({ error: 'Erro ao excluir a role' });
+    }
+});
+
+app.get('/roles/:id/edit', isAuthenticated, async (req, res) => {
+    const roleId = req.params.id;
+    try {
+        const [role] = await executeQuery('SELECT * FROM roles WHERE id = ?', [roleId]);
+        res.render('roles/edit', { pageTitle: 'Editar Role', role, username: req.user.username });
+    } catch (error) {
+        res.status(500).send('Erro ao buscar role para edição');
+    }
+});
+
+app.post('/roles/:id', async (req, res) => {
+    const roleId = req.params.id;
+
+    const { name, description } = req.body;
+    try {
+        await executeQuery('UPDATE roles SET name = ?, description = ? WHERE id = ?', [name, description,roleId]);
+        req.flash('success', 'Role atualizada com sucesso!');
+        res.redirect('/roles');
+    } catch (error) {
+        res.status(500).send('Erro ao atualizar a role');
+    }
+});
+// ROLES
 
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);

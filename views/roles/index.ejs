@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <script>
+        function excluirRole(id) {
+            if (confirm("Tem certeza de que deseja excluir esta role?")) {
+                fetch(`/roles/${id}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro ao excluir a role');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao excluir a role');
+                    });
+            }
+        }
+
+        function filtrarPorNome() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("filtroNome");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tabelaRole");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0]; // índice 0 corresponde à coluna do nome
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="">
+    <%- include('../header') %>
+
+    
+    <div class="main-content"> 
+        <%- include('../sidebar', { pageType: 'Roles' }) %>
+        <div class="container mb-5 m-4">
+            <div class="title-section">
+                <% if (successMessage.length > 0) { %>
+                    <div class="alert alert-success" role="alert">
+                        <%= successMessage[0] %>
+                    </div>
+                <% } %>
+                <div class="d-flex justify-content-start align-items-center mb-4">
+                    <h4 class="m-0"><%= pageTitle %></h4>
+                    <a href="/roles/new" class="btn btn-primary btn-sm ml-3 product-new"> <i class="bi bi-pencil-square"></i> Novo </a>
+                </div>
+            </div>
+            <div class="content-section bg-white bg-body rounded p-4">
+                <div class="mb-3 product-filter">
+                    <label for="filtroNome" class="form-label">Filtrar por Nome:</label>
+                    <input type="text" class="form-control" id="filtroNome" onkeyup="filtrarPorNome()" placeholder="Digite o nome">
+                </div>
+                <table id="tabelaRole" class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% roles.forEach(role => { %>
+                        <tr>
+                            <td><%= role.name %></td>
+                            <td><%= role.description %></td>
+                            <td>
+                                <!-- Ícone de exclusão -->
+                                <a href="#" class="text-danger" onclick="excluirRole('<%= role.id %>')">
+                                    <i class="bi bi-x-circle"></i>
+                                </a>
+                                <!-- Ícone de edição -->
+                                <a href="/roles/<%= role.id %>/edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                
+            </div>
+            <!-- FOOTER -->
+            <div class="footer">
+                <%- include('../footer') %>
+            </div>
+            <!-- FOOTER -->
+        </div>
+    </div>
+</body>
+</html>
