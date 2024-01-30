@@ -20,9 +20,24 @@ app.use(session({
 
 app.use(flash());
 
+
+
+
+
 // Inicialização do Passport.js
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Rota para fazer logout
+app.get('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            console.error('Erro ao fazer logout:', err);
+            return res.status(500).send('Erro ao fazer logout');
+        }
+        res.redirect('/login'); // Redireciona para a página de login
+    });
+});
 
 // Configuração da estratégia de autenticação local
 passport.use(new LocalStrategy(
@@ -63,6 +78,7 @@ passport.deserializeUser(async (id, done) => {
         done(error);
     }
 });
+
 
 // Rota de login
 app.post('/login', passport.authenticate('local', {
@@ -136,14 +152,14 @@ app.get('/products', isAuthenticated, async (req, res) => {
     try {
         const products = await executeQuery('SELECT * FROM products');
         const successMessage = req.flash('success'); 
-        res.render('products/index', { pageTitle: 'Produtos', products, successMessage });
+        res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username });
     } catch (error) {
         res.status(500).send('Erro ao buscar produtos');
     }
 });
 
 app.get('/products/new', isAuthenticated, (req, res) => {
-    res.render('products/new', { pageTitle: 'Inserir Produto' });
+    res.render('products/new', { pageTitle: 'Inserir Produto' , username: req.user.username });
 });
 
 app.post('/products', async (req, res) => {
@@ -172,7 +188,7 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
     const productId = req.params.id;
     try {
         const [product] = await executeQuery('SELECT * FROM products WHERE id = ?', [productId]);
-        res.render('products/edit', { pageTitle: 'Editar Produto', product });
+        res.render('products/edit', { pageTitle: 'Editar Produto', product, username: req.user.username });
     } catch (error) {
         res.status(500).send('Erro ao buscar produto para edição');
     }
@@ -189,6 +205,8 @@ app.post('/products/:id', async (req, res) => {
         res.status(500).send('Erro ao atualizar produto');
     }
 });
+
+
 
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);
