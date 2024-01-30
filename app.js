@@ -110,8 +110,8 @@ app.post('/register', async (req, res) => {
             return res.redirect('/register');
         }
 
-        // Insere o novo usuário no banco de dados
-        await executeQuery('INSERT INTO users (username, password) VALUES (?, ?)', [username, password]);
+        // Insere o novo usuário no banco de dados com roles_id padrão (1)
+        await executeQuery('INSERT INTO users (username, password, roles_id) VALUES (?, ?, 1)', [username, password]);
         
         req.flash('success', 'Usuário cadastrado com sucesso!');
         res.redirect('/login'); // Redireciona para a página de login após o cadastro
@@ -120,6 +120,7 @@ app.post('/register', async (req, res) => {
         res.status(500).send('Erro ao cadastrar usuário');
     }
 });
+
 
 // Middleware para verificar autenticação
 const isAuthenticated = (req, res, next) => {
@@ -153,6 +154,7 @@ app.get('/products', isAuthenticated, async (req, res) => {
         const products = await executeQuery('SELECT * FROM products');
         const successMessage = req.flash('success'); 
         res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username });
+
     } catch (error) {
         res.status(500).send('Erro ao buscar produtos');
     }
@@ -164,11 +166,18 @@ app.get('/products/new', isAuthenticated, (req, res) => {
 
 app.post('/products', async (req, res) => {
     const { name, price } = req.body;
+    const userId = req.session.passport.user; 
+
+    if (!userId) {
+        return res.status(401).send('Usuário não autenticado');
+    }
+
     try {
-        await executeQuery('INSERT INTO products (name, price) VALUES (?, ?)', [name, price]);
+        await executeQuery('INSERT INTO products (name, price, users_id) VALUES (?, ?, ?)', [name, price, userId]);
         req.flash('success', 'Produto cadastrado com sucesso!');
         res.redirect('/products');
     } catch (error) {
+        console.error('Erro ao cadastrar produto:', error);
         res.status(500).send('Erro ao cadastrar produto');
     }
 });
