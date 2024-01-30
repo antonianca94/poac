@@ -8,7 +8,7 @@
 <body>
     <%- include('../header') %>
     <div class="main-content"> 
-        <%- include('../sidebar') %>
+        <%- include('../sidebar',{ pageType: 'Produtos' }) %>
         <div class="container mb-5 m-4">
             <div class="title-section">
                 <div class="d-flex justify-content-start align-items-center mb-4">
@@ -30,12 +30,13 @@
                     <button type="submit" class="btn btn-primary">Atualizar</button>
                 </form>
             </div>
+            <!-- FOOTER -->
+            <div class="footer">
+                <%- include('../footer') %>
+            </div>
+            <!-- FOOTER -->
         </div>
     </div>
-    <!-- FOOTER -->
-    <div class="footer">
-        <%- include('../footer') %>
-    </div>
-    <!-- FOOTER -->
+
 </body>
 </html>

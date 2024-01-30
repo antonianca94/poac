@@ -33,12 +33,10 @@
 
         .footer {
             width: 100%;
-            background-color: #f5f5f5;
-            /* position: fixed; */
             bottom: 0;
             left: 0;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         .product-filter, .product-filter input, #tabelaProdutos {
             font-size: 0.9rem !important;
@@ -64,7 +62,12 @@
         a {
             color: #d96900;
         }
-
+        .c-orange {
+            color: #d96900
+        }
+        .b-orange {
+            background-color: #d96900
+        }
         .sidebar a {
             font-size: 0.95rem;
         }
@@ -93,7 +96,7 @@
                         <!-- Adicione a classe 'dropdown-menu-right' para alinhar à direita -->
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             <!-- Opção de logout -->
-                            <a class="dropdown-item" href="/logout">Logout</a>
+                            <a class="dropdown-item" href="/logout"><i class="bi bi-box-arrow-right mr-2 c-orange"></i>Logout</a>
                         </div>
                     </li>
                 </ul>

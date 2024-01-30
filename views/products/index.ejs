@@ -52,7 +52,7 @@
 
     
     <div class="main-content"> 
-        <%- include('../sidebar') %>
+        <%- include('../sidebar', { pageType: 'Produtos' }) %>
         <div class="container mb-5 m-4">
             <div class="title-section">
                 <% if (successMessage.length > 0) { %>
@@ -99,12 +99,12 @@
                 </table>
                 
             </div>
+            <!-- FOOTER -->
+            <div class="footer">
+                <%- include('../footer') %>
+            </div>
+            <!-- FOOTER -->
         </div>
     </div>
-    <!-- FOOTER -->
-    <div class="footer">
-        <%- include('../footer') %>
-    </div>
-    <!-- FOOTER -->
 </body>
 </html>
