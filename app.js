@@ -13,7 +13,7 @@ app.set('views', './views');
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
-    secret: 'anne-marketplace',
+    secret: 'poac-marketplace',
     resave: false,
     saveUninitialized: true
 }));
@@ -132,7 +132,7 @@ async function executeQuery(sql, values = []) {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'anne'
+        database: 'poac'
     });
 
     try {
