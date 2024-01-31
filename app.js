@@ -158,12 +158,17 @@ app.get('/products', isAuthenticated, async (req, res) => {
     }
 });
 
-app.get('/products/new', isAuthenticated, (req, res) => {
-    res.render('products/new', { pageTitle: 'Inserir Produto' , username: req.user.username });
+app.get('/products/new', isAuthenticated, async (req, res) => {
+    try {
+        const categories = await executeQuery('SELECT * FROM categories');
+        res.render('products/new', { pageTitle: 'Inserir Produto', categories, username: req.user.username });
+    } catch (error) {
+        res.status(500).send('Erro ao carregar categorias para criar um novo produto');
+    }
 });
 
 app.post('/products', async (req, res) => {
-    const { name, price } = req.body;
+    const { name, price, categorias} = req.body;
     const userId = req.session.passport.user; 
 
     if (!userId) {
@@ -171,7 +176,7 @@ app.post('/products', async (req, res) => {
     }
 
     try {
-        await executeQuery('INSERT INTO products (name, price, users_id) VALUES (?, ?, ?)', [name, price, userId]);
+        await executeQuery('INSERT INTO products (name, price, users_id, categories_id) VALUES (?, ?, ?, ?)', [name, price, userId, categorias]);
         req.flash('success', 'Produto cadastrado com sucesso!');
         res.redirect('/products');
     } catch (error) {

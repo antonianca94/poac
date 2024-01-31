@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= pageTitle %></title>
+    <!-- Inclua os arquivos de script e estilo do Select2 -->
+
 </head>
 <body>
     <%- include('../header') %>
@@ -17,6 +19,16 @@
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
                 <form action="/products" method="post">
+                    <!-- Seletor de categorias -->
+                    <div class="form-group">
+                        <label for="categorias">Selecionar Categoria</label>
+                        <select class="form-control" id="categorias" name="categorias" multiple>
+                            <!-- Opções preenchidas dinamicamente com as categorias disponíveis -->
+                            <% categories.forEach(category => { %>
+                                <option value="<%= category.id %>"><%= category.name %></option>
+                            <% }); %>
+                        </select>
+                    </div>
                     <div class="row">
                         <div class="form-group col">
                             <label for="name">Nome</label>
@@ -29,7 +41,7 @@
                     </div>
                     <div class="row">
                         <div class="form-group col">
-                            <label for="name">Descrição</label>
+                            <label for="descricao">Descrição</label>
                             <textarea class="form-control" name="descricao" id="descricao" rows="3"></textarea>
                         </div>
                     </div>
@@ -44,5 +56,12 @@
         </div>
     </div>
 
+    <!-- Script para inicializar o Select2 -->
+    <script>
+        
+        $(document).ready(function() {
+            $('#categorias').select2();
+        });
+    </script>
 </body>
 </html>
