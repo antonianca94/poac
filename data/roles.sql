@@ -1,3 +1,3 @@
-INSERT INTO anne.roles (name,description) VALUES
+INSERT INTO poac.roles (name,description) VALUES
 	 ('administrator','qqqqqqqq'),
 	 ('Editor','Usuário Editor');
