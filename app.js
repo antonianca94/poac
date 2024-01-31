@@ -75,6 +75,8 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
+
+
 // LOGIN USER
 // Rota de login
 app.post('/login', passport.authenticate('local', {
@@ -146,6 +148,12 @@ async function executeQuery(sql, values = []) {
     }
 }
 
+
+app.get('/dashboard', isAuthenticated, async (req, res) => {
+    res.render('dashboard/index', { pageTitle: 'Painel',username: req.user.username });
+
+});
+
 // PRODUCTS
 app.get('/products', isAuthenticated, async (req, res) => {
     try {
@@ -200,7 +208,9 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
     const productId = req.params.id;
     try {
         const [product] = await executeQuery('SELECT * FROM products WHERE id = ?', [productId]);
-        res.render('products/edit', { pageTitle: 'Editar Produto', product, username: req.user.username });
+        const categories = await executeQuery('SELECT * FROM categories'); // Busca todas as categorias
+
+        res.render('products/edit', { pageTitle: 'Editar Produto', product, categories, username: req.user.username });
     } catch (error) {
         res.status(500).send('Erro ao buscar produto para edição');
     }
