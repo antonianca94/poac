@@ -73,6 +73,7 @@
                 <table id="tabelaRole" class="table">
                     <thead class="table-light">
                         <tr>
+                            <th scope="col">Id</th>
                             <th scope="col">Nome</th>
                             <th scope="col">Descrição</th>
                             <th scope="col">Ações</th>
@@ -81,6 +82,7 @@
                     <tbody>
                         <% roles.forEach(role => { %>
                         <tr>
+                            <td><%= role.id %></td>
                             <td><%= role.name %></td>
                             <td><%= role.description %></td>
                             <td>

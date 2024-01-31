@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= pageTitle %></title>
     <script>
-        function excluirProduto(productId) {
-            if (confirm("Tem certeza de que deseja excluir este produto?")) {
-                fetch(`/products/${productId}`, {
+        function excluirCategory(id) {
+            if (confirm("Tem certeza de que deseja excluir esta categoria?")) {
+                fetch(`/categories/${id}`, {
                         method: 'DELETE'
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Erro ao excluir o produto');
+                            throw new Error('Erro ao excluir a categoria');
                         }
                         return response.json();
                     })
@@ -22,7 +22,7 @@
                     })
                     .catch(error => {
                         console.error('Erro:', error);
-                        alert('Erro ao excluir o produto');
+                        alert('Erro ao excluir a categoria');
                     });
             }
         }
@@ -31,7 +31,7 @@
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("filtroNome");
             filter = input.value.toUpperCase();
-            table = document.getElementById("tabelaProdutos");
+            table = document.getElementById("tabelaCategory");
             tr = table.getElementsByTagName("tr");
             for (i = 0; i < tr.length; i++) {
                 td = tr[i].getElementsByTagName("td")[0]; // índice 0 corresponde à coluna do nome
@@ -51,9 +51,8 @@
     <%- include('../header') %>
 
     
-    
     <div class="main-content"> 
-        <%- include('../sidebar', { pageType: 'Produtos' }) %>
+        <%- include('../sidebar', { pageType: 'Categorias' }) %>
         <div class="container mb-5 m-4">
             <div class="title-section">
                 <% if (successMessage.length > 0) { %>
@@ -63,34 +62,42 @@
                 <% } %>
                 <div class="d-flex justify-content-start align-items-center mb-4">
                     <h4 class="m-0"><%= pageTitle %></h4>
-                    <a href="/products/new" class="btn btn-primary btn-sm ml-3 product-new"> <i class="bi bi-pencil-square"></i> Novo Produto</a>
+                    <a href="/categories/new" class="btn btn-primary btn-sm ml-3 product-new"> <i class="bi bi-pencil-square"></i> Nova </a>
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
                 <div class="mb-3 product-filter">
                     <label for="filtroNome" class="form-label">Filtrar por Nome:</label>
-                    <input type="text" class="form-control" id="filtroNome" onkeyup="filtrarPorNome()" placeholder="Digite o nome do produto">
+                    <input type="text" class="form-control" id="filtroNome" onkeyup="filtrarPorNome()" placeholder="Digite o nome">
                 </div>
-                <table id="tabelaProdutos" class="table">
+                <table id="tabelaCategory" class="table">
                     <thead class="table-light">
                         <tr>
+                            <th scope="col">Id</th>
                             <th scope="col">Nome</th>
-                            <th scope="col">Preço</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Categoria</th>
                             <th scope="col">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% products.forEach(product => { %>
+                        <% categories.forEach(category => { %>
                         <tr>
-                            <td><%= product.name %></td>
-                            <td><%= product.price %></td>
+                            <td><%= category.id %></td>
+                            <td><%= category.name %></td>
+                            <td><%= category.description %></td>
+                            <td>
+                                <% const parentCategory = categories.find(cat => cat.id === category.parent_id); %>
+                                <%= parentCategory ? parentCategory.name : 'Sem categoria' %>
+                            </td>
+
                             <td>
                                 <!-- Ícone de exclusão -->
-                                <a href="#" class="text-danger" onclick="excluirProduto('<%= product.id %>')">
+                                <a href="#" class="text-danger" onclick="excluirCategory('<%= category.id %>')">
                                     <i class="bi bi-x-circle"></i>
                                 </a>
                                 <!-- Ícone de edição -->
-                                <a href="/products/<%= product.id %>/edit">
+                                <a href="/categories/<%= category.id %>/edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                             </td>

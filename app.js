@@ -283,6 +283,80 @@ app.post('/roles/:id', async (req, res) => {
 });
 // ROLES
 
+// CATEGORIES
+app.get('/categories', isAuthenticated, async (req, res) => {
+    try {
+        const categories = await executeQuery('SELECT * FROM categories');
+        const successMessage = req.flash('success'); 
+        res.render('categories/index', { pageTitle: 'Categorias', categories, successMessage, username: req.user.username });
+
+    } catch (error) {
+        res.status(500).send('Erro ao buscar categorias');
+    }
+});
+
+app.get('/categories/new', isAuthenticated, async(req, res) => {
+    const categories = await executeQuery('SELECT * FROM categories');
+
+    res.render('categories/new', { pageTitle: 'Inserir Categoria' , categories, username: req.user.username });
+});
+
+app.post('/categories', async (req, res) => {
+    const { name, description, parent_id } = req.body;
+    const userId = req.session.passport.user; 
+
+    if (!userId) {
+        return res.status(401).send('Usuário não autenticado');
+    }
+
+    try {
+        await executeQuery('INSERT INTO categories (name, description, parent_id) VALUES (?, ?, ?)', [name, description, parent_id]);
+        req.flash('success', 'Categoria cadastrada com sucesso!');
+        res.redirect('/categories');
+    } catch (error) {
+        console.error('Erro ao cadastrar a categoria:', error);
+        res.status(500).send('Erro ao cadastrar a categoria');
+    }
+});
+
+app.delete('/categories/:id', isAuthenticated, async (req, res) => {
+    const categoryId = req.params.id;
+    try {
+        await executeQuery('DELETE FROM categories WHERE id = ?', [categoryId]);
+        res.status(200).json({ message: 'Categoria excluída com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao excluir a categoria:', error);
+        res.status(500).json({ error: 'Erro ao excluir a categoria' });
+    }
+});
+
+app.get('/categories/:id/edit', isAuthenticated, async (req, res) => {
+    const categoryId = req.params.id;
+    try {
+        const categories = await executeQuery('SELECT * FROM categories');
+        const [category] = await executeQuery('SELECT * FROM categories WHERE id = ?', [categoryId]);
+        res.render('categories/edit', { pageTitle: 'Editar Categoria', category, categories, username: req.user.username });
+    } catch (error) {
+        res.status(500).send('Erro ao buscar categoria para edição');
+    }
+});
+
+
+
+app.post('/categories/:id', async (req, res) => {
+    const categoryId = req.params.id;
+
+    const { name, description, parent_id} = req.body;
+    try {
+        await executeQuery('UPDATE categories SET name = ?, description = ?, parent_id = ? WHERE id = ?', [name, description,parent_id,categoryId]);
+        req.flash('success', 'Categoria atualizada com sucesso!');
+        res.redirect('/categories');
+    } catch (error) {
+        res.status(500).send('Erro ao atualizar a categoria');
+    }
+});
+// CATEGORIES
+
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);
 });
