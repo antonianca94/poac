@@ -1,0 +1,95 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@200;300;400;500;600;700;800;900&display=swap');
+
+body {
+    /* display: flex;
+    flex-direction: column; */
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background: #f1f1f1;
+}
+.main-content {
+    margin-top: 1rem;
+}
+.content-section{
+    box-shadow: 0 1px 5px 1px rgb(0 0 0 / 10%) !important;
+}
+.footer {
+
+    text-align: center;
+    font-size: 0.8rem;
+}
+.product-filter, .product-filter input, #tabelaProdutos, #tabelaRole, #tabelaCategory {
+    font-size: 0.9rem !important;
+}
+.product-new{
+    font-size: 0.74rem !important;
+}
+.btn-primary {
+    color: #fff;
+    background-color: #d96900;
+    border-color: #d96900;
+}
+.btn-primary:hover {
+    color: #fff;
+    background-color: #d96900;
+    border-color: #d96900;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: #d96900;
+
+}
+a {
+    color: #d96900;
+}
+.c-orange {
+    color: #d96900
+}
+.b-orange {
+    background-color: #d96900
+}
+.sidebar{
+    box-shadow: 0 1px 5px 1px rgb(0 0 0 / 10%) !important;
+}
+.sidebar a {
+    font-size: 0.95rem;
+}
+
+.sidebar .nav-link {
+    color: #adadad !important;
+}
+.sidebar .nav-link.active {
+    color: #ffffff !important;
+}
+.sidebar .nav-link:hover {
+    color: #d96900 !important;
+}
+.sidebar .nav-link.active:hover {
+    color: #ffffff !important;
+}
+ul.welcome li a {
+    font-size: .8rem;
+
+}
+label.form-label {
+    font-size: 0.94rem;
+    letter-spacing: -0.2px;
+    margin-bottom: 0.4rem;
+    color: #9d9d9d;
+}
+.select2-container--default .select2-selection--single{
+    border: 1px solid #ced4da;
+    height: 37px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 35px;
+    font-size: 0.9rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 35px;
+}
+.form-control {
+    font-size: 0.9rem;
+}

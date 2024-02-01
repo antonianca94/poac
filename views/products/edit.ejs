@@ -17,10 +17,9 @@
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
                 <form action="/products/<%= product.id %>" method="post">
-
-                    <div class="form-group">
-                        <label for="categorias">Selecionar Categoria</label>
-                        <select class="form-control" id="categorias" name="categorias">
+                    <div class="mb-3">
+                        <label for="categorias" class="form-label">Selecionar Categoria</label>
+                        <select class="form-select" id="categorias" name="categorias">
                             <% const renderCategories = (categories, parentPath = '') => { %>
                                 <% categories.forEach(category => { %>
                                     <!-- Renderiza a opção para a categoria atual -->
@@ -35,19 +34,20 @@
                         </select>
                     </div>
                     
-
-                    <div class="row">                      
-                        <div class="form-group col">
-                            <label for="name">Nome:</label>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="name" class="form-label">Nome:</label>
                             <input type="text" class="form-control" id="name" name="name" value="<%= product.name %>" required>
                         </div>
-                        <div class="form-group col">
-                            <label for="price">Preço:</label>
+                        <div class="col">
+                            <label for="price" class="form-label">Preço:</label>
                             <input type="text" class="form-control" id="price" name="price" value="<%= product.price %>" required>
                         </div>
                     </div>
+                    
                     <button type="submit" class="btn btn-primary">Atualizar</button>
                 </form>
+                
             </div>
             <!-- FOOTER -->
             <div class="footer">
