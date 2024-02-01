@@ -161,7 +161,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
 // PRODUCTS
 app.get('/products', isAuthenticated, async (req, res) => {
     try {
-        const products = await executeQuery('select * from products');
+        const products = await executeQuery('SELECT products.id, products.name, products.price, categories_products.name AS category_name FROM products INNER JOIN categories_products ON products.categories_products_id = categories_products.id');
         const successMessage = req.flash('success'); 
         res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username });
 
