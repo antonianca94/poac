@@ -159,7 +159,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
 // PRODUCTS
 app.get('/products', isAuthenticated, async (req, res) => {
     try {
-        const products = await executeQuery('');
+        const products = await executeQuery('select * from products');
         const successMessage = req.flash('success'); 
         res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username });
 
@@ -361,8 +361,11 @@ app.get('/categories/:id/edit', isAuthenticated, async (req, res) => {
     try {
         const categories = await executeQuery('SELECT * FROM categories_products');
         const [category] = await executeQuery('SELECT * FROM categories_products WHERE id = ?', [categoryId]);
+
         res.render('categories/edit', { pageTitle: 'Editar Categoria', category, categories, username: req.user.username });
-    } catch (error) {
+    } 
+    
+    catch (error) {
         res.status(500).send('Erro ao buscar categoria para edição');
     }
 });
@@ -372,9 +375,9 @@ app.get('/categories/:id/edit', isAuthenticated, async (req, res) => {
 app.post('/categories/:id', async (req, res) => {
     const categoryId = req.params.id;
 
-    const { name, description, parent_id} = req.body;
+    const { name, description, id_categories_products} = req.body;
     try {
-        await executeQuery('UPDATE categories SET name = ?, description = ?, parent_id = ? WHERE id = ?', [name, description,parent_id,categoryId]);
+        await executeQuery('UPDATE categories_products SET name = ?, description = ?, id_categories_products = ? WHERE id = ?', [name, description,id_categories_products,categoryId]);
         req.flash('success', 'Categoria atualizada com sucesso!');
         res.redirect('/categories');
     } catch (error) {

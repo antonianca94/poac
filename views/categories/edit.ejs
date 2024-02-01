@@ -29,12 +29,11 @@
 
                         <div class="form-group col-12">
                             <label for="select_parent">Categoria Principal</label>
-                            <select class="form-control" name="parent_id" id="select_parent">
-                                <% if (category.parent_id === 0) { %>
+                            <select class="form-control" name="id_categories_products" id="select_parent">
+                                <% if (category.id_categories_products === 0) { %>
                                     <option value="0" selected>Sem categoria principal</option>
-                                <% } else { %>
-                                    <option value="0">Sem categoria principal</option>
                                 <% } %>
+                              
                                 <% categories.forEach(cat => { %>
                                     <% if (cat.id === category.id_categories_products) { %>
                                         <option value="<%= cat.id %>" selected><%= cat.name %></option>
