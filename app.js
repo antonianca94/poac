@@ -171,7 +171,7 @@ app.get('/products', isAuthenticated, async (req, res) => {
 
 app.get('/products/new', isAuthenticated, async (req, res) => {
     try {
-        const categories = await executeQuery('SELECT * FROM categories');
+        const categories = await executeQuery('SELECT * FROM categories_products');
         res.render('products/new', { pageTitle: 'Inserir Produto', categories, username: req.user.username });
     } catch (error) {
         res.status(500).send('Erro ao carregar categorias para criar um novo produto');
@@ -219,7 +219,7 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
     const productId = req.params.id;
     try {
         const [product] = await executeQuery('SELECT * FROM products WHERE id = ?', [productId]);
-        const categories = await executeQuery('SELECT * FROM categories'); // Busca todas as categorias
+        const categories = await executeQuery('SELECT * FROM categories_products'); // Busca todas as categorias
 
         res.render('products/edit', { pageTitle: 'Editar Produto', product, categories, username: req.user.username });
     } catch (error) {
