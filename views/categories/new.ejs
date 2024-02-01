@@ -17,17 +17,19 @@
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
                 <form action="/categories" method="post">
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="form-group col">
-                            <label for="name">Nome</label>
+                            <label for="name" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="form-group col">
-                            <label for="price">Descrição</label>
+                            <label for="price" class="form-label">Descrição</label>
                             <input type="text" class="form-control" id="description" name="description">
                         </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="form-group col-12">
-                            <label for="select_parent">Categoria Principal</label>
+                            <label for="select_parent" class="form-label">Categoria Principal</label>
                             <select class="form-control" name="parent_id" id="select_parent">
                                 <option value="0">Sem principal</option> <!-- Criar uma opção para cada ID -->
                                 <% categories.forEach(category => { %> <!-- Iterar sobre as categorias -->

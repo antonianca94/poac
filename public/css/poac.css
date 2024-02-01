@@ -85,11 +85,36 @@ label.form-label {
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 35px;
     font-size: 0.9rem;
+    letter-spacing: -0.2px;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 35px;
 }
 .form-control {
+    font-size: 0.9rem;
+}
+
+.form-control:focus {
+    border-color: #d96900;
+    box-shadow: 0 0 0 0.25rem rgb(217 105 0 / 12%);
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: #d96900;
+}
+.select2-results__option--selectable {
+    cursor: pointer;
+    font-size: 0.9rem;
+    letter-spacing: -0.2px;
+}
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    outline-color: #d96900;
+}
+.alert.alert-success {
+    font-size: 0.9rem;
+    padding: 0.7rem;
+}
+.product-filter label {
     font-size: 0.9rem;
 }
