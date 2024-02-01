@@ -88,7 +88,7 @@
                             <td><%= category.name %></td>
                             <td><%= category.description %></td>
                             <td>
-                                <% const parentCategory = categories.find(cat => cat.id === category.parent_id); %>
+                                <% const parentCategory = categories.find(cat => cat.id === category.id_categories_products); %>
                                 <%= parentCategory ? parentCategory.name : 'Sem categoria' %>
                             </td>
 

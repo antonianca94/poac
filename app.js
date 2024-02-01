@@ -80,7 +80,7 @@ passport.deserializeUser(async (id, done) => {
 // LOGIN USER
 // Rota de login
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/products',
+    successRedirect: '/dashboard',
     failureRedirect: '/login',
     failureFlash: true
 }));
@@ -138,8 +138,10 @@ async function executeQuery(sql, values = []) {
     });
 
     try {
-        const [rows] = await connection.execute(sql, values);
-        return rows;
+        const [result] = await connection.execute(sql, values);
+        // console.log(result);
+
+        return result; // Retorna o resultado da inserção ou outra operação
     } catch (error) {
         console.error('Erro ao executar consulta SQL:', error);
         throw error;
@@ -157,7 +159,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
 // PRODUCTS
 app.get('/products', isAuthenticated, async (req, res) => {
     try {
-        const products = await executeQuery('SELECT * FROM products');
+        const products = await executeQuery('');
         const successMessage = req.flash('success'); 
         res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username });
 
@@ -165,6 +167,7 @@ app.get('/products', isAuthenticated, async (req, res) => {
         res.status(500).send('Erro ao buscar produtos');
     }
 });
+
 
 app.get('/products/new', isAuthenticated, async (req, res) => {
     try {
@@ -176,15 +179,18 @@ app.get('/products/new', isAuthenticated, async (req, res) => {
 });
 
 app.post('/products', async (req, res) => {
-    const { name, price, categorias} = req.body;
-    const userId = req.session.passport.user; 
+    const { name, price, categorias } = req.body;
+    const userId = req.session.passport.user;
 
     if (!userId) {
         return res.status(401).send('Usuário não autenticado');
     }
 
     try {
-        await executeQuery('INSERT INTO products (name, price, users_id, categories_id) VALUES (?, ?, ?, ?)', [name, price, userId, categorias]);
+        // Insere o produto na tabela products
+        await executeQuery('INSERT INTO products (name, price, users_id, categories_products_id) VALUES (?, ?, ?, ?)', [name, price, userId]);
+
+
         req.flash('success', 'Produto cadastrado com sucesso!');
         res.redirect('/products');
     } catch (error) {
@@ -192,6 +198,11 @@ app.post('/products', async (req, res) => {
         res.status(500).send('Erro ao cadastrar produto');
     }
 });
+
+
+
+
+
 
 app.delete('/products/:id', isAuthenticated, async (req, res) => {
     const productId = req.params.id;
@@ -301,7 +312,7 @@ app.post('/roles/:id', async (req, res) => {
 // CATEGORIES
 app.get('/categories', isAuthenticated, async (req, res) => {
     try {
-        const categories = await executeQuery('SELECT * FROM categories');
+        const categories = await executeQuery('SELECT * FROM categories_products');
         const successMessage = req.flash('success'); 
         res.render('categories/index', { pageTitle: 'Categorias', categories, successMessage, username: req.user.username });
 
@@ -311,7 +322,7 @@ app.get('/categories', isAuthenticated, async (req, res) => {
 });
 
 app.get('/categories/new', isAuthenticated, async(req, res) => {
-    const categories = await executeQuery('SELECT * FROM categories');
+    const categories = await executeQuery('SELECT * FROM categories_products');
 
     res.render('categories/new', { pageTitle: 'Inserir Categoria' , categories, username: req.user.username });
 });
@@ -325,7 +336,7 @@ app.post('/categories', async (req, res) => {
     }
 
     try {
-        await executeQuery('INSERT INTO categories (name, description, parent_id) VALUES (?, ?, ?)', [name, description, parent_id]);
+        await executeQuery('INSERT INTO categories_products (name, description, id_categories_products) VALUES (?, ?, ?)', [name, description, parent_id]);
         req.flash('success', 'Categoria cadastrada com sucesso!');
         res.redirect('/categories');
     } catch (error) {
@@ -337,7 +348,7 @@ app.post('/categories', async (req, res) => {
 app.delete('/categories/:id', isAuthenticated, async (req, res) => {
     const categoryId = req.params.id;
     try {
-        await executeQuery('DELETE FROM categories WHERE id = ?', [categoryId]);
+        await executeQuery('DELETE FROM categories_products WHERE id = ?', [categoryId]);
         res.status(200).json({ message: 'Categoria excluída com sucesso!' });
     } catch (error) {
         console.error('Erro ao excluir a categoria:', error);
@@ -348,8 +359,8 @@ app.delete('/categories/:id', isAuthenticated, async (req, res) => {
 app.get('/categories/:id/edit', isAuthenticated, async (req, res) => {
     const categoryId = req.params.id;
     try {
-        const categories = await executeQuery('SELECT * FROM categories');
-        const [category] = await executeQuery('SELECT * FROM categories WHERE id = ?', [categoryId]);
+        const categories = await executeQuery('SELECT * FROM categories_products');
+        const [category] = await executeQuery('SELECT * FROM categories_products WHERE id = ?', [categoryId]);
         res.render('categories/edit', { pageTitle: 'Editar Categoria', category, categories, username: req.user.username });
     } catch (error) {
         res.status(500).send('Erro ao buscar categoria para edição');
