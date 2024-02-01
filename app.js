@@ -171,12 +171,39 @@ app.get('/products', isAuthenticated, async (req, res) => {
 
 app.get('/products/new', isAuthenticated, async (req, res) => {
     try {
-        const categories = await executeQuery('SELECT * FROM categories_products');
-        res.render('products/new', { pageTitle: 'Inserir Produto', categories, username: req.user.username });
+        // Consulta SQL para obter todas as categorias principais (id_categories_products = 0)
+        const parentCategoriesQuery = `SELECT * FROM categories_products WHERE id_categories_products = 0;`;
+        const parentCategories = await executeQuery(parentCategoriesQuery);
+
+        // Consulta SQL para obter todas as categorias
+        const categoriesQuery = `SELECT * FROM categories_products;`;
+        const categories = await executeQuery(categoriesQuery);
+
+        // Construindo a estrutura de árvore de categorias
+        const buildCategoryTree = (parentCategories, categories) => {
+            return parentCategories.map(parent => {
+                const children = categories.filter(child => child.id_categories_products === parent.id);
+                return {
+                    id: parent.id,
+                    name: parent.name,
+                    children: buildCategoryTree(children, categories)
+                };
+            });
+        };
+
+        // Construindo o JSON da árvore de categorias
+        const categoryTree = buildCategoryTree(parentCategories, categories);
+        // Renderiza a página com as categorias
+        res.render('products/new', { 
+            pageTitle: 'Inserir Produto', 
+            categoryTree: categoryTree, 
+            username: req.user.username 
+        });
     } catch (error) {
         res.status(500).send('Erro ao carregar categorias para criar um novo produto');
     }
 });
+
 
 app.post('/products', async (req, res) => {
     const { name, price, categorias } = req.body;
@@ -188,7 +215,7 @@ app.post('/products', async (req, res) => {
 
     try {
         // Insere o produto na tabela products
-        await executeQuery('INSERT INTO products (name, price, users_id, categories_products_id) VALUES (?, ?, ?, ?)', [name, price, userId]);
+        await executeQuery('INSERT INTO products (name, price, users_id, categories_products_id) VALUES (?, ?, ?, ?)', [name, price, userId, categorias]);
 
 
         req.flash('success', 'Produto cadastrado com sucesso!');
@@ -221,23 +248,63 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
         const [product] = await executeQuery('SELECT * FROM products WHERE id = ?', [productId]);
         const categories = await executeQuery('SELECT * FROM categories_products'); // Busca todas as categorias
 
-        res.render('products/edit', { pageTitle: 'Editar Produto', product, categories, username: req.user.username });
+        const parentCategoriesQuery = `SELECT * FROM categories_products WHERE id_categories_products = 0;`;
+        const parentCategories = await executeQuery(parentCategoriesQuery);
+
+        const categoriesQuery = `SELECT * FROM categories_products;`;
+        const allCategories = await executeQuery(categoriesQuery);
+
+        const buildCategoryTree = (parentCategories, categories) => {
+            return parentCategories.map(parent => {
+                const children = categories.filter(child => child.id_categories_products === parent.id);
+                return {
+                    id: parent.id,
+                    name: parent.name,
+                    children: buildCategoryTree(children, categories)
+                };
+            });
+        };
+
+        const categoryTree = buildCategoryTree(parentCategories, allCategories);
+
+        res.render('products/edit', { 
+            pageTitle: 'Editar Produto', 
+            product, 
+            categories, 
+            categoryTree, 
+            username: req.user.username 
+        });
     } catch (error) {
         res.status(500).send('Erro ao buscar produto para edição');
     }
 });
 
+
 app.post('/products/:id', async (req, res) => {
     const productId = req.params.id;
-    const { name, price } = req.body;
+    const { name, price, categorias } = req.body;
+
     try {
+        // Atualiza o nome e o preço do produto
         await executeQuery('UPDATE products SET name = ?, price = ? WHERE id = ?', [name, price, productId]);
+
+        // Verifica se a categoria selecionada é válida
+        const categoryExists = await executeQuery('SELECT id FROM categories_products WHERE id = ?', [categorias]);
+        if (categoryExists.length === 0) {
+            return res.status(400).send('Categoria inválida');
+        }
+
+        // Atualiza a categoria do produto
+        await executeQuery('UPDATE products SET categories_products_id = ? WHERE id = ?', [categorias, productId]);
+
         req.flash('success', 'Produto atualizado com sucesso!');
         res.redirect('/products');
     } catch (error) {
+        console.error('Erro ao atualizar produto:', error);
         res.status(500).send('Erro ao atualizar produto');
     }
 });
+
 // PRODUCTS
 
 // ROLES

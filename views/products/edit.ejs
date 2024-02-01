@@ -19,13 +19,22 @@
                 <form action="/products/<%= product.id %>" method="post">
 
                     <div class="form-group">
-                        <label for="categorias"> Categorias </label>
-                        <select class="form-control" id="categorias" name="categorias" multiple>
-                            <% categories.forEach(category => { %>
-                                <option value="<%= category.id %>" <% if (product.categories_id === category.id) { %> selected <% } %>><%= category.name %></option>
-                            <% }); %>
+                        <label for="categorias">Selecionar Categoria</label>
+                        <select class="form-control" id="categorias" name="categorias">
+                            <% const renderCategories = (categories, parentPath = '') => { %>
+                                <% categories.forEach(category => { %>
+                                    <!-- Renderiza a opção para a categoria atual -->
+                                    <option value="<%= category.id %>" <% if (product.categories_products_id === category.id) { %> selected <% } %>><%= parentPath + category.name %></option>
+                                    <!-- Se a categoria tiver filhos, chama recursivamente a função para renderizá-los -->
+                                    <% if (category.children && category.children.length) { %>
+                                        <% renderCategories(category.children, parentPath + category.name + ' > '); %>
+                                    <% } %>
+                                <% }); %>
+                            <% } %>
+                            <% renderCategories(categoryTree); %>
                         </select>
                     </div>
+                    
 
                     <div class="row">                      
                         <div class="form-group col">

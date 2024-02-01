@@ -19,16 +19,24 @@
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
                 <form action="/products" method="post">
-                    <!-- Seletor de categorias -->
+   
                     <div class="form-group">
                         <label for="categorias">Selecionar Categoria</label>
-                        <select class="form-control" id="categorias" name="categorias" multiple>
-                            <!-- Opções preenchidas dinamicamente com as categorias disponíveis -->
-                            <% categories.forEach(category => { %>
-                                <option value="<%= category.id %>"><%= category.name %></option>
-                            <% }); %>
+                        <select class="form-control" id="categorias" name="categorias">
+                            <% const renderCategories = (categories, parentPath = '') => { %>
+                                <% categories.forEach(category => { %>
+                                    <!-- Renderiza a opção para a categoria atual -->
+                                    <option value="<%= category.id %>"><%= parentPath + category.name %></option>
+                                    <!-- Se a categoria tiver filhos, chama recursivamente a função para renderizá-los -->
+                                    <% if (category.children && category.children.length) { %>
+                                        <% renderCategories(category.children, parentPath + category.name + ' > '); %>
+                                    <% } %>
+                                <% }); %>
+                            <% } %>
+                            <% renderCategories(categoryTree); %>
                         </select>
                     </div>
+                    
                     <div class="row">
                         <div class="form-group col">
                             <label for="name">Nome</label>
@@ -58,9 +66,12 @@
 
     <!-- Script para inicializar o Select2 -->
     <script>
-        
         $(document).ready(function() {
-            $('#categorias').select2();
+
+            $('#categorias').val(null);
+
+            $('#categorias').select2({
+            })
         });
     </script>
 </body>
