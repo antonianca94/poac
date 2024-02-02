@@ -92,16 +92,13 @@
                                 <% const parentCategory = categories.find(cat => cat.id === category.id_categories_products); %>
                                 <%= parentCategory ? parentCategory.name : 'Sem categoria' %>
                             </td>
-
                             <td>
-                                <!-- Ícone de exclusão -->
-                                <a href="#" class="text-danger" onclick="excluirCategory('<%= category.id %>')">
-                                    <i class="bi bi-x-circle"></i>
+                                <a class="btn btn-sm btn-primary btn-edit" role="button" href="/categories/<%= category.id %>/edit">
+                                        <i class="bi bi-pen"></i>
                                 </a>
-                                <!-- Ícone de edição -->
-                                <a href="/categories/<%= category.id %>/edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
+                                <button href="#" type="button" class="btn btn-sm btn-danger" onclick="excluirCategory('<%= category.id %>')">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
                             </td>
                         </tr>
                         <% }); %>

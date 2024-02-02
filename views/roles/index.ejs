@@ -87,14 +87,12 @@
                             <td><%= role.name %></td>
                             <td><%= role.description %></td>
                             <td>
-                                <!-- Ícone de exclusão -->
-                                <a href="#" class="text-danger" onclick="excluirRole('<%= role.id %>')">
-                                    <i class="bi bi-x-circle"></i>
+                                <a class="btn btn-sm btn-primary btn-edit" role="button" href="/roles/<%= role.id %>/edit">
+                                        <i class="bi bi-pen"></i>
                                 </a>
-                                <!-- Ícone de edição -->
-                                <a href="/roles/<%= role.id %>/edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
+                                <button href="#" type="button" class="btn btn-sm btn-danger" onclick="excluirRole('<%= role.id %>')">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
                             </td>
                         </tr>
                         <% }); %>

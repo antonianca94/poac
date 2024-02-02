@@ -125,3 +125,14 @@ button.btn-close {
     top: 0.2rem;
     font-size: 0.7rem;
 }
+.btn-edit {
+    background: #0067ff;
+    border-color: #0067ff;
+}
+.btn-edit:hover {
+    background: #014ec1;
+    border-color: #014ec1;
+}
+.btn-edit a {
+    color: #fff;
+}
