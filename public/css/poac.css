@@ -114,7 +114,14 @@ label.form-label {
 .alert.alert-success {
     font-size: 0.9rem;
     padding: 0.7rem;
+    display: flex;
+    justify-content: space-between;
 }
 .product-filter label {
     font-size: 0.9rem;
+}
+button.btn-close {
+    position: inherit;
+    top: 0.2rem;
+    font-size: 0.7rem;
 }
