@@ -5,6 +5,35 @@ const mysql = require('mysql2/promise');
 const flash = require('express-flash');
 const session = require('express-session');
 
+const multer = require('multer');
+
+// const storage = multer.diskStorage({
+//     destination: 'uploads/',
+//     filename: function (req, file, cb) {
+//         // Generate a unique identifier for the filename
+//         const uniqueFilename = Date.now() + '-' + Math.round(Math.random() * 1E9);
+
+//         // Preserve the original file extension
+//         const originalExtension = file.originalname.split('.').pop();
+        
+//         // Create the final filename with the original extension
+//         const finalFilename = uniqueFilename + '.' + originalExtension;
+
+//         cb(null, finalFilename);
+//     }
+// });
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/') // O diretório onde as imagens serão armazenadas
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname); // Nome do arquivo (timestamp + nome original)
+    }
+});
+
+const upload = multer({ storage: storage });
+
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
@@ -161,7 +190,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
 // PRODUCTS
 app.get('/products', isAuthenticated, async (req, res) => {
     try {
-        const products = await executeQuery('SELECT products.id, products.name, products.price, categories_products.name AS category_name FROM products INNER JOIN categories_products ON products.categories_products_id = categories_products.id');
+        const products = await executeQuery('SELECT products.id, products.name, products.price,  products.quantity, categories_products.name AS category_name FROM products INNER JOIN categories_products ON products.categories_products_id = categories_products.id');
         const successMessage = req.flash('success'); 
         res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username });
 
@@ -207,29 +236,45 @@ app.get('/products/new', isAuthenticated, async (req, res) => {
 });
 
 
-app.post('/products', async (req, res) => {
-    const { name, price, categorias } = req.body;
-    const userId = req.session.passport.user;
+var Images = upload.any();
 
-    if (!userId) {
-        return res.status(401).send('Usuário não autenticado');
-    }
-
+app.post('/products', Images, async (req, res) => {
     try {
-        // Insere o produto na tabela products
-        await executeQuery('INSERT INTO products (name, price, users_id, categories_products_id) VALUES (?, ?, ?, ?)', [name, price, userId, categorias]);
+        // Verificar se algum arquivo foi enviado
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).send('Nenhum arquivo foi enviado.');
+        }
 
+        // Processar os arquivos enviados
+        req.files.forEach(file => {
+            console.log('Tipo do arquivo:', file);
+        });
+
+        // Extrair os dados do produto do corpo da requisição
+        const { name, price, categorias, quantity } = req.body;
+        const userId = req.session.passport.user;
+
+        // Verificar se o usuário está autenticado
+        if (!userId) {
+            return res.status(401).send('Usuário não autenticado');
+        }
+
+        const featured_image = req.files.find(file => file.fieldname === 'featured_image');
+        const gallery_images = req.files
+            .filter(file => file.fieldname === 'gallery_images[]')
+            .map(file => file.filename);
+
+
+        // Lógica para inserir o produto no banco de dados
+        await executeQuery('INSERT INTO products (name, price, users_id, quantity, categories_products_id, featured_image, gallery_images) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, price, userId, quantity, categorias, featured_image.filename, gallery_images]);
 
         req.flash('success', 'Produto cadastrado com sucesso!');
         res.redirect('/products');
     } catch (error) {
-        console.error('Erro ao cadastrar produto:', error);
-        res.status(500).send('Erro ao cadastrar produto');
+        console.error('Erro ao processar arquivos ou inserir produto:', error);
+        res.status(500).send('Erro ao processar arquivos ou inserir produto.');
     }
 });
-
-
-
 
 
 
@@ -284,11 +329,11 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
 
 app.post('/products/:id', async (req, res) => {
     const productId = req.params.id;
-    const { name, price, categorias } = req.body;
+    const { name, price, categorias, quantity } = req.body;
 
     try {
         // Atualiza o nome e o preço do produto
-        await executeQuery('UPDATE products SET name = ?, price = ? WHERE id = ?', [name, price, productId]);
+        await executeQuery('UPDATE products SET name = ?, price = ?, quantity = ? WHERE id = ?', [name, price, quantity, productId]);
 
         // Verifica se a categoria selecionada é válida
         const categoryExists = await executeQuery('SELECT id FROM categories_products WHERE id = ?', [categorias]);

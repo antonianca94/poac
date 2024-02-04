@@ -19,22 +19,44 @@
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
-                <form action="/products" method="post">
-                    <div class="mb-3">
-                        <label for="categorias" class="form-label">Selecionar Categoria</label>
-                        <select class="form-select" id="categorias" name="categorias">
-                            <% const renderCategories = (categories, parentPath = '') => { %>
-                                <% categories.forEach(category => { %>
-                                    <!-- Renderiza a opção para a categoria atual -->
-                                    <option value="<%= category.id %>"><%= parentPath + category.name %></option>
-                                    <!-- Se a categoria tiver filhos, chama recursivamente a função para renderizá-los -->
-                                    <% if (category.children && category.children.length) { %>
-                                        <% renderCategories(category.children, parentPath + category.name + ' > '); %>
-                                    <% } %>
-                                <% }); %>
-                            <% } %>
-                            <% renderCategories(categoryTree); %>
-                        </select>
+                <form action="/products" method="post" enctype="multipart/form-data">
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="featured_image" class="form-label">Imagem Destacada</label>
+                            <input type="file" class="form-control" id="featured_image" name="featured_image" data-tipo="principal">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="gallery_images" class="form-label">Galeria de Imagens</label>
+                            <input type="file" class="form-control" id="gallery_images" name="gallery_images[]" data-tipo="galeria" multiple>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="categorias" class="form-label">Selecionar Categoria</label>
+                            <select class="form-select" id="categorias" name="categorias">
+                                <% const renderCategories = (categories, parentPath = '') => { %>
+                                    <% categories.forEach(category => { %>
+                                        <!-- Renderiza a opção para a categoria atual -->
+                                        <option value="<%= category.id %>"><%= parentPath + category.name %></option>
+                                        <!-- Se a categoria tiver filhos, chama recursivamente a função para renderizá-los -->
+                                        <% if (category.children && category.children.length) { %>
+                                            <% renderCategories(category.children, parentPath + category.name + ' > '); %>
+                                        <% } %>
+                                    <% }); %>
+                                <% } %>
+                                <% renderCategories(categoryTree); %>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="code" class="form-label">Código</label>
+                            <input type="text" class="form-control" id="code" name="code" readonly>
+                        </div>
+                        <!-- Outros campos do formulário -->
                     </div>
                     
                     <div class="row mb-3">
@@ -45,6 +67,10 @@
                         <div class="col">
                             <label for="price" class="form-label">Preço</label>
                             <input type="text" class="form-control" id="price" name="price" required>
+                        </div>
+                        <div class="col">
+                            <label for="price" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity">
                         </div>
                     </div>
                     

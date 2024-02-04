@@ -136,3 +136,10 @@ button.btn-close {
 .btn-edit a {
     color: #fff;
 }
+
+.card-text {
+    display: none;
+  }
+  .card-text.show {
+    display: block;
+  }

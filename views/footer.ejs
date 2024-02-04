@@ -1,6 +1,6 @@
 <footer class="p-3">
     <div class="container-fluid">
-        <p class="m-0">&copy; <%= new Date().getFullYear() %> Poac. Todos os direitos reservados.</p>
+        <p class="m-0">&copy; <%= new Date().getFullYear() %> POAC. Todos os direitos reservados.</p>
     </div>
 </footer>
 
@@ -9,3 +9,12 @@
 <script src="/public/js/bootstrap.js"></script>
 <script src="/public/js/bootstrap.min.js"></script>
 <script src="/public/js/bootstrap.bundle.js"></script>
+<script>
+        $(document).ready(function() {
+        function generateCODE() {
+            const uuid = Math.random().toString(36).substring(2, 10);
+            return uuid.toUpperCase();
+        }
+        $('#code').val(generateCODE());
+    });
+</script>
