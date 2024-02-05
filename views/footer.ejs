@@ -16,19 +16,19 @@
 
 <script>
     $(document).ready(function() {
-
-        $('#categorias').val(null);
-
+        
         $('#categorias').select2({ });
 
+        $('#products_new #categorias').val(null);
+        
         function generateCODE() {
             const uuid = Math.random().toString(36).substring(2, 10);
             return uuid.toUpperCase();
         }
 
-        $('#code').val(generateCODE());
+        $('.products_new #code').val(generateCODE());
 
-        $("#gallery_images").fileinput({
+        $(".products_new #gallery_images").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
             language: 'pt-BR', // Define o idioma para português do Brasil
             showRemove: true, // Adiciona botão de remoção para cada foto
@@ -50,7 +50,7 @@
 
         });
 
-        $("#featured_image").fileinput({
+        $(".products_new #featured_image").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
             language: 'pt-BR', // Define o idioma para português do Brasil
             showRemove: true, // Adiciona botão de remoção para cada foto
@@ -71,5 +71,4 @@
 
     });
 
-    
 </script>
