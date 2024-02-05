@@ -136,15 +136,13 @@ button.btn-close {
 .btn-edit a {
     color: #fff;
 }
-
 .card-text {
     display: none;
   }
-  .card-text.show {
+.card-text.show {
     display: block;
-  }
-
-  input.file-caption-name.form-control.kv-fileinput-caption {
+}
+input.file-caption-name.form-control.kv-fileinput-caption {
     height: 38px;
 }
 .file-preview {
@@ -152,4 +150,7 @@ button.btn-close {
 }
 .krajee-default.file-preview-frame {
     background: #fff;
+}
+.file-caption {
+    margin-top: 1.4rem;
 }
