@@ -6,6 +6,18 @@
     <title><%= pageTitle %></title>
     <!-- Inclua os arquivos de script e estilo do Select2 -->
 
+    <style>
+        #image-preview {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        #image-preview img {
+            max-width: 100px;
+            max-height: 100px;
+            margin: 5px;
+        }
+    </style>
+
 </head>
 <body>
     <%- include('../header') %>
@@ -19,21 +31,11 @@
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
+
+
                 <form action="/products" method="post" enctype="multipart/form-data">
 
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="featured_image" class="form-label">Imagem Destacada</label>
-                            <input type="file" class="form-control" id="featured_image" name="featured_image" data-tipo="principal">
-                        </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <div class="col">
-                            <label for="gallery_images" class="form-label">Galeria de Imagens</label>
-                            <input type="file" class="form-control" id="gallery_images" name="gallery_images[]" data-tipo="galeria" multiple>
-                        </div>
-                    </div>
 
                     <div class="row mb-3">
                         <div class="col">
@@ -74,6 +76,21 @@
                         </div>
                     </div>
                     
+                    <div class="row mb-3 mt-4">
+                        <div class="col">
+                            <label for="featured_image" class="form-label">Imagem Destacada</label>
+                            <input type="file" class="form-control" id="featured_image" name="featured_image" data-tipo="principal" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 mt-4">
+                        <div class="col">
+                            <label for="gallery_images" class="form-label">Galeria de Imagens</label>
+                            <div id="image-preview"></div>
+                            <input type="file" class="form-control" id="gallery_images" name="gallery_images[]" data-tipo="galeria" multiple required>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label for="descricao" class="form-label">Descrição</label>
                         <textarea class="form-control" name="descricao" id="descricao" rows="3"></textarea>
@@ -96,10 +113,7 @@
     <script>
         $(document).ready(function() {
 
-            $('#categorias').val(null);
 
-            $('#categorias').select2({
-            })
         });
     </script>
 </body>

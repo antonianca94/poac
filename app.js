@@ -247,7 +247,7 @@ app.post('/products', Images, async (req, res) => {
 
         // Processar os arquivos enviados
         req.files.forEach(file => {
-            console.log('Tipo do arquivo:', file);
+            // console.log('Tipo do arquivo:', file);
         });
 
         // Extrair os dados do produto do corpo da requisição
@@ -264,6 +264,8 @@ app.post('/products', Images, async (req, res) => {
             .filter(file => file.fieldname === 'gallery_images[]')
             .map(file => file.filename);
 
+            // console.log(featured_image)
+            // console.log(gallery_images)
 
         // Lógica para inserir o produto no banco de dados
         await executeQuery('INSERT INTO products (name, price, users_id, quantity, categories_products_id, featured_image, gallery_images) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, price, userId, quantity, categorias, featured_image.filename, gallery_images]);

@@ -143,3 +143,13 @@ button.btn-close {
   .card-text.show {
     display: block;
   }
+
+  input.file-caption-name.form-control.kv-fileinput-caption {
+    height: 38px;
+}
+.file-preview {
+    background: #e7e7e787;
+}
+.krajee-default.file-preview-frame {
+    background: #fff;
+}
