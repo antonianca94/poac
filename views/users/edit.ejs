@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+</head>
+<body>
+    <%- include('../header') %>
+    <div class="main-content d-flex flex-xxl-row flex-xl-row flex-lg-row"> 
+        <%- include('../sidebar',{ pageType: 'Usuários' }) %>
+        <div class="container mb-5 m-4">
+            <div class="title-section">
+                <div class="d-flex justify-content-start align-items-center mb-4">
+                    <h4 class="m-0"><%= pageTitle %></h4>
+                </div>
+            </div>
+            <div class="content-section bg-white bg-body rounded p-4">
+                <form action="/roles/<%= role.id %>" method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="name" name="name" value="<%= role.name %>" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="description" class="form-label">Descrição</label>
+                                <input type="text" class="form-control" id="description" name="description" value="<%= role.description %>" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                </form>
+            </div>
+            <!-- FOOTER -->
+            <div class="footer">
+                <%- include('../footer') %>
+            </div>
+            <!-- FOOTER -->
+        </div>
+    </div>
+
+</body>
+</html>

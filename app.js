@@ -502,6 +502,77 @@ app.post('/categories/:id', async (req, res) => {
 });
 // CATEGORIES
 
+// USERS
+app.get('/users', isAuthenticated, async (req, res) => {
+    try {
+        const users = await executeQuery('SELECT * FROM users');
+
+        const successMessage = req.flash('success'); 
+        res.render('users/index', { pageTitle: 'Usuários', users, successMessage, username: req.user.username });
+
+    } catch (error) {
+        res.status(500).send('Erro ao buscar usuários');
+    }
+});
+
+app.get('/users/new', isAuthenticated, async (req, res) => {
+    const roles = await executeQuery('SELECT * FROM roles');
+    res.render('users/new', { pageTitle: 'Inserir Usuário' , roles, username: req.user.username });
+});
+
+app.post('/users', async (req, res) => {
+    const { name, username, role, password } = req.body;
+    const userId = req.session.passport.user; 
+
+    if (!userId) {
+        return res.status(401).send('Usuário não autenticado');
+    }
+
+    try {
+        await executeQuery('INSERT INTO users (name, username, roles_id, password) VALUES (?, ?, ?, ?)', [name, username, role, password]);
+        req.flash('success', 'Usuário cadastrado com sucesso!');
+        res.redirect('/users');
+    } catch (error) {
+        console.error('Erro ao cadastrar o Usuário:', error);
+        res.status(500).send('Erro ao cadastrar o Usuário');
+    }
+});
+
+app.delete('/users/:id', isAuthenticated, async (req, res) => {
+    const userId = req.params.id;
+    try {
+        await executeQuery('DELETE FROM users WHERE id = ?', [userId]);
+        res.status(200).json({ message: 'Usuário excluído com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao excluir o Usuário:', error);
+        res.status(500).json({ error: 'Erro ao excluir o Usuário' });
+    }
+});
+
+app.get('/users/:id/edit', isAuthenticated, async (req, res) => {
+    const userId = req.params.id;
+    try {
+        const [role] = await executeQuery('SELECT * FROM users WHERE id = ?', [userId]);
+        res.render('users/edit', { pageTitle: 'Editar Usuário', role, username: req.user.username });
+    } catch (error) {
+        res.status(500).send('Erro ao buscar usuário para edição');
+    }
+});
+
+app.post('/users/:id', async (req, res) => {
+    const roleId = req.params.id;
+
+    const { name, description } = req.body;
+    try {
+        await executeQuery('UPDATE users SET name = ?, description = ? WHERE id = ?', [name, description,roleId]);
+        req.flash('success', 'Usuário atualizada com sucesso!');
+        res.redirect('/users');
+    } catch (error) {
+        res.status(500).send('Erro ao atualizar a Usuário');
+    }
+});
+// USERS
+
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);
 });

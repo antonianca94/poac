@@ -19,7 +19,7 @@ body {
     text-align: center;
     font-size: 0.8rem;
 }
-.product-filter, .product-filter input, #tabelaProdutos, #tabelaRole, #tabelaCategory {
+.product-filter, .product-filter input, #tabelaProdutos, #tabelaRole, #tabelaCategory, #tabelaUsers {
     font-size: 0.9rem !important;
 }
 .product-new{
@@ -153,4 +153,7 @@ input.file-caption-name.form-control.kv-fileinput-caption {
 }
 .file-caption {
     margin-top: 1.4rem;
+}
+.file-drop-zone-title {
+    font-size: 1.1rem !important;
 }

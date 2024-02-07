@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <script>
+        function excluirUser(id) {
+            if (confirm("Tem certeza de que deseja excluir este Usuário?")) {
+                fetch(`/users/${id}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro ao excluir o Usuário');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao excluir o Usuário');
+                    });
+            }
+        }
+
+        function filtrarPorNome() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("filtroNome");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("tabelaUsers");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1]; // índice 0 corresponde à coluna do nome
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="">
+    <%- include('../header') %>
+
+    
+    <div class="main-content d-xxl-flex d-xl-flex d-lg-flex"> 
+        <%- include('../sidebar', { pageType: 'Usuários' }) %>
+        <div class="container mb-5 m-4">
+            <div class="title-section">
+                <% if (successMessage.length > 0) { %>
+                    <div class="alert alert-success" role="alert">
+                        <%= successMessage[0] %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+                <div class="d-flex justify-content-start align-items-center mb-4">
+                    <h4 class="m-0"><%= pageTitle %></h4>
+                    <a href="/users/new" class="btn btn-primary btn-sm ms-3 product-new"> <i class="bi bi-pencil-square"></i> Novo </a>
+                </div>
+            </div>
+            <div class="content-section bg-white bg-body rounded p-4">
+                <div class="mb-3 product-filter">
+                    <label for="filtroNome" class="form-label">Filtrar por Nome:</label>
+                    <input type="text" class="form-control" id="filtroNome" onkeyup="filtrarPorNome()" placeholder="Digite o nome">
+                </div>
+                <table id="tabelaUsers" class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Usuário</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(user => { %>
+                        <tr>
+                            <td><%= user.name %></td>
+                            <td><%= user.username %></td>
+                            <td><%= user.username %></td>
+                            <td>
+                                <a class="btn btn-sm btn-primary btn-edit" role="button" href="/users/<%= user.id %>/edit">
+                                        <i class="bi bi-pen"></i>
+                                </a>
+                                <button href="#" type="button" class="btn btn-sm btn-danger" onclick="excluirUser('<%= user.id %>')">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+                
+            </div>
+            <!-- FOOTER -->
+            <div class="footer">
+                <%- include('../footer') %>
+            </div>
+            <!-- FOOTER -->
+        </div>
+    </div>
+</body>
+</html>

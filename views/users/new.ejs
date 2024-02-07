@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+</head>
+<body>
+    <%- include('../header') %>
+    <div class="main-content d-xxl-flex d-xl-flex d-lg-flex"> 
+        <%- include('../sidebar',{ pageType: 'Usuários' }) %>
+        <div class="container mb-5 m-4">
+            <div class="title-section">
+                <div class="d-flex justify-content-start align-items-center mb-4">
+                    <h4 class="m-0"><%= pageTitle %></h4>
+                </div>
+            </div>
+            <div class="content-section bg-white bg-body rounded p-4">
+                <form action="/Users" method="post">
+                    <div class="row mb-0">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="name" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="description" class="form-label">Usuário</label>
+                                <input type="text" class="form-control" id="username" name="username">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="description" class="form-label">Role</label>
+                                <select name="role" id="role" class="form-control">
+                                    <% roles.forEach(role => { %>
+                                        <option value="<%= role.id %>"><%= role.name %></option>
+                                    <% }); %>
+                                </select>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-group mb-3">
+                                <label for="name" class="form-label">Senha</label>
+                                <input type="text" class="form-control" id="password" name="password" required>
+                            </div>
+                        </div>
+
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </form>
+            </div>
+            <!-- FOOTER -->
+            <div class="footer">
+                <%- include('../footer') %>
+            </div>
+            <!-- FOOTER -->
+        </div>
+    </div>
+
+</body>
+</html>
