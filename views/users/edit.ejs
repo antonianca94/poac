@@ -16,23 +16,43 @@
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
-                <form action="/roles/<%= role.id %>" method="post">
+                <form action="/users/<%= user.id %>" method="post">
                     <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="form-group">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
                                 <label for="name" class="form-label">Nome</label>
-                                <input type="text" class="form-control" id="name" name="name" value="<%= role.name %>" required>
+                                <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="description" class="form-label">Descrição</label>
-                                <input type="text" class="form-control" id="description" name="description" value="<%= role.description %>" required>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="username" class="form-label">Usuário</label>
+                                <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>" required>
                             </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="role" class="form-label">Role</label>
+                                <select name="role" id="role" class="form-control">
+                                    <% roles.forEach(role => { %>
+                                        <option value="<%= role.id %>" <%= role.id === user.roles_id ? 'selected' : '' %>><%= role.name %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="name" class="form-label">Senha</label>
+                                    <input type="text" class="form-control" id="password" name="password" value="<%= user.password %>"  required>
+                                </div>
+                            </div>
+    
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Atualizar</button>
                 </form>
+                
             </div>
             <!-- FOOTER -->
             <div class="footer">

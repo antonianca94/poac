@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= pageTitle %></title>
 </head>
-<body>
+<body id="users_new">
     <%- include('../header') %>
     <div class="main-content d-xxl-flex d-xl-flex d-lg-flex"> 
         <%- include('../sidebar',{ pageType: 'Usuários' }) %>
@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
-                <form action="/Users" method="post">
+                <form action="/users" method="post">
                     <div class="row mb-0">
                         <div class="col-md-4">
                             <div class="form-group mb-3">
@@ -38,7 +38,6 @@
                                         <option value="<%= role.id %>"><%= role.name %></option>
                                     <% }); %>
                                 </select>
-                                
                             </div>
                         </div>
                     </div>

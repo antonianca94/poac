@@ -1,27 +1,12 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 const mysql = require('mysql2/promise');
 const flash = require('express-flash');
 const session = require('express-session');
 
 const multer = require('multer');
-
-// const storage = multer.diskStorage({
-//     destination: 'uploads/',
-//     filename: function (req, file, cb) {
-//         // Generate a unique identifier for the filename
-//         const uniqueFilename = Date.now() + '-' + Math.round(Math.random() * 1E9);
-
-//         // Preserve the original file extension
-//         const originalExtension = file.originalname.split('.').pop();
-        
-//         // Create the final filename with the original extension
-//         const finalFilename = uniqueFilename + '.' + originalExtension;
-
-//         cb(null, finalFilename);
-//     }
-// });
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -264,8 +249,8 @@ app.post('/products', Images, async (req, res) => {
             .filter(file => file.fieldname === 'gallery_images[]')
             .map(file => file.filename);
 
-            // console.log(featured_image)
-            // console.log(gallery_images)
+            console.log(featured_image)
+            console.log(gallery_images)
 
         // Lógica para inserir o produto no banco de dados
         await executeQuery('INSERT INTO products (name, price, users_id, quantity, categories_products_id, featured_image, gallery_images) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, price, userId, quantity, categorias, featured_image.filename, gallery_images]);
@@ -505,8 +490,7 @@ app.post('/categories/:id', async (req, res) => {
 // USERS
 app.get('/users', isAuthenticated, async (req, res) => {
     try {
-        const users = await executeQuery('SELECT * FROM users');
-
+        const users = await executeQuery('SELECT users.*, roles.name AS role_name FROM users INNER JOIN roles ON users.roles_id = roles.id');
         const successMessage = req.flash('success'); 
         res.render('users/index', { pageTitle: 'Usuários', users, successMessage, username: req.user.username });
 
@@ -552,19 +536,21 @@ app.delete('/users/:id', isAuthenticated, async (req, res) => {
 app.get('/users/:id/edit', isAuthenticated, async (req, res) => {
     const userId = req.params.id;
     try {
-        const [role] = await executeQuery('SELECT * FROM users WHERE id = ?', [userId]);
-        res.render('users/edit', { pageTitle: 'Editar Usuário', role, username: req.user.username });
+        const [user] = await executeQuery('SELECT * FROM users WHERE id = ?', [userId]);
+        const [role] = await executeQuery('SELECT * FROM roles WHERE id = ?', [user.roles_id]);
+        const roles = await executeQuery('SELECT * FROM roles');
+        res.render('users/edit', { pageTitle: 'Editar Usuário', user, role, roles, username: req.user.username });
     } catch (error) {
         res.status(500).send('Erro ao buscar usuário para edição');
     }
 });
 
 app.post('/users/:id', async (req, res) => {
-    const roleId = req.params.id;
+    const userId = req.params.id;
 
-    const { name, description } = req.body;
+    const { username, password, name, role } = req.body;
     try {
-        await executeQuery('UPDATE users SET name = ?, description = ? WHERE id = ?', [name, description,roleId]);
+        await executeQuery('UPDATE users SET username = ?, password = ?, name = ? , roles_id = ? WHERE id = ?', [username, password, name, role, userId]);
         req.flash('success', 'Usuário atualizada com sucesso!');
         res.redirect('/users');
     } catch (error) {
