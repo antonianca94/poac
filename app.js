@@ -1,6 +1,10 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const {check, validationResult} = require('express-validator');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(bodyParser.urlencoded({extended: true}));
 
 const mysql = require('mysql2/promise');
 const flash = require('express-flash');
@@ -354,10 +358,13 @@ app.get('/roles', isAuthenticated, async (req, res) => {
 });
 
 app.get('/roles/new', isAuthenticated, (req, res) => {
-    res.render('roles/new', { pageTitle: 'Inserir Role' , username: req.user.username });
+    res.render('roles/new', { pageTitle: 'Inserir Role' , errors: '', username: req.user.username });
 });
 
-app.post('/roles', async (req, res) => {
+app.post('/roles',[
+    check('name').notEmpty().withMessage('Nome não pode estar vazio'),
+    check('description').notEmpty().withMessage('Descrição não pode estar vazia')
+], async (req, res) => {
     const { name, description } = req.body;
     const userId = req.session.passport.user; 
 
@@ -365,14 +372,21 @@ app.post('/roles', async (req, res) => {
         return res.status(401).send('Usuário não autenticado');
     }
 
-    try {
-        await executeQuery('INSERT INTO roles (name, description) VALUES (?, ?)', [name, description]);
-        req.flash('success', 'Role cadastrada com sucesso!');
-        res.redirect('/roles');
-    } catch (error) {
-        console.error('Erro ao cadastrar a role:', error);
-        res.status(500).send('Erro ao cadastrar a role');
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.render('roles/new', { pageTitle: 'Inserir Role', errors: errors.mapped(), username: req.user.username });
     }
+    else{
+        try {
+            await executeQuery('INSERT INTO roles (name, description) VALUES (?, ?)', [name, description]);
+            req.flash('success', 'Role cadastrada com sucesso!');
+            res.redirect('/roles');
+        } catch (error) {
+            console.error('Erro ao cadastrar a role:', error);
+            res.status(500).send('Erro ao cadastrar a role');
+        }
+    }
+
 });
 
 app.delete('/roles/:id', isAuthenticated, async (req, res) => {
