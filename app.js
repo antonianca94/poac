@@ -240,7 +240,7 @@ app.post('/products', Images, async (req, res) => {
         });
 
         // Extrair os dados do produto do corpo da requisição
-        const { name, price, categorias, quantity } = req.body;
+        const { code, name, price, categorias, quantity } = req.body;
         const userId = req.session.passport.user;
 
         // Verificar se o usuário está autenticado
@@ -253,11 +253,11 @@ app.post('/products', Images, async (req, res) => {
             .filter(file => file.fieldname === 'gallery_images[]')
             .map(file => file.filename);
 
-            console.log(featured_image)
-            console.log(gallery_images)
+            // console.log(featured_image)
+            // console.log(gallery_images)
 
         // Lógica para inserir o produto no banco de dados
-        await executeQuery('INSERT INTO products (name, price, users_id, quantity, categories_products_id, featured_image, gallery_images) VALUES (?, ?, ?, ?, ?, ?, ?)', [name, price, userId, quantity, categorias, featured_image.filename, gallery_images]);
+        await executeQuery('INSERT INTO products (sku, name, price, users_id, quantity, categories_products_id, featured_image, gallery_images) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [code, name, price, userId, quantity, categorias, featured_image.filename, gallery_images]);
 
         req.flash('success', 'Produto cadastrado com sucesso!');
         res.redirect('/products');
