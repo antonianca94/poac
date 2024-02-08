@@ -21,13 +21,23 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name" class="form-label">Nome</label>
-                                <input type="text" class="form-control" id="name" name="name" value="<%= role.name %>" required>
+                                <input type="text" class="form-control <% if(errors && errors.name) { %> is-invalid <% } %>" id="name" name="name" value="<%= role.name %>">
+                                <%  if(errors && errors.name) { %>
+                                    <span class="invalid-feedback" style="display: block;">
+                                        <%=  errors.name.msg  %>
+                                    </span>
+                                <% } %>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="description" class="form-label">Descrição</label>
-                                <input type="text" class="form-control" id="description" name="description" value="<%= role.description %>" required>
+                                <input type="text" class="form-control <% if(errors && errors.description) { %> is-invalid <% } %>" id="description" name="description" value="<%= role.description %>">
+                                <%  if(errors && errors.description) { %>
+                                    <span class="invalid-feedback" style="display: block;">
+                                        <%=  errors.description.msg  %>
+                                    </span>
+                                <% } %>
                             </div>
                         </div>
                     </div>

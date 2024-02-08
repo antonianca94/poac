@@ -404,22 +404,33 @@ app.get('/roles/:id/edit', isAuthenticated, async (req, res) => {
     const roleId = req.params.id;
     try {
         const [role] = await executeQuery('SELECT * FROM roles WHERE id = ?', [roleId]);
-        res.render('roles/edit', { pageTitle: 'Editar Role', role, username: req.user.username });
+        res.render('roles/edit', { pageTitle: 'Editar Role', role, errors: '', username: req.user.username });
     } catch (error) {
         res.status(500).send('Erro ao buscar role para edição');
     }
 });
 
-app.post('/roles/:id', async (req, res) => {
+app.post('/roles/:id', 
+[
+    check('name').notEmpty().withMessage('Nome não pode estar vazio'),
+    check('description').notEmpty().withMessage('Descrição não pode estar vazia')
+],
+async (req, res) => {
     const roleId = req.params.id;
-
+    const [role] = await executeQuery('SELECT * FROM roles WHERE id = ?', [roleId]);
     const { name, description } = req.body;
-    try {
-        await executeQuery('UPDATE roles SET name = ?, description = ? WHERE id = ?', [name, description,roleId]);
-        req.flash('success', 'Role atualizada com sucesso!');
-        res.redirect('/roles');
-    } catch (error) {
-        res.status(500).send('Erro ao atualizar a role');
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+        return res.render('roles/edit',  { pageTitle: 'Editar Role', role, errors: errors.mapped(), username: req.user.username });
+    } else{
+        try {
+            await executeQuery('UPDATE roles SET name = ?, description = ? WHERE id = ?', [name, description,roleId]);
+            req.flash('success', 'Role atualizada com sucesso!');
+            res.redirect('/roles');
+        } catch (error) {
+            res.status(500).send('Erro ao atualizar a role');
+        }
     }
 });
 // ROLES
