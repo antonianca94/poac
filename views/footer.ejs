@@ -14,6 +14,9 @@
 <script src="/public/js/fileinput.min.js"></script>
 <script src="/public/js/locales/pt-BR.js"></script>
 
+<script src="/public/js/validation.js"></script>
+
+
 <script>
     $(document).ready(function() {
         
@@ -22,10 +25,14 @@
         
         $('#role').select2({ });
 
-        $('#categorias').select2({ });
 
-        $('#products_new #categorias').val(null);
+        // $('#products_new #categorias').val(null);
         
+        // $('#categorias').select2({ });
+
+        
+
+    
         function generateCODE() {
             const uuid = Math.random().toString(36).substring(2, 10);
             return uuid.toUpperCase();
@@ -74,6 +81,11 @@
 
         });
 
+
+
+
     });
+
+
 
 </script>

@@ -31,16 +31,12 @@
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
-
-
-                <form action="/products" method="post" enctype="multipart/form-data">
-
-
-
+                <form id="sendProduct" action="/products" method="post" enctype="multipart/form-data">
                     <div class="row mb-3">
                         <div class="col">
                             <label for="categorias" class="form-label">Selecionar Categoria</label>
                             <select class="form-select" id="categorias" name="categorias">
+                                <option></option>
                                 <% const renderCategories = (categories, parentPath = '') => { %>
                                     <% categories.forEach(category => { %>
                                         <!-- Renderiza a opção para a categoria atual -->
@@ -53,6 +49,8 @@
                                 <% } %>
                                 <% renderCategories(categoryTree); %>
                             </select>
+                            <div class="invalid-feedback" id="categoriasError"></div>
+
                         </div>
                         <div class="col">
                             <label for="code" class="form-label">Código</label>
@@ -64,11 +62,15 @@
                     <div class="row mb-3">
                         <div class="col">
                             <label for="name" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <input type="text" class="form-control" id="name" name="name" >
+                            <i class="fas fa-exclamation-circle failure-icon"></i>
+                            <i class="far fa-check-circle success-icon"></i>
+                            <div class="invalid-feedback" id="nameError"></div>
+
                         </div>
                         <div class="col">
                             <label for="price" class="form-label">Preço</label>
-                            <input type="text" class="form-control" id="price" name="price" required>
+                            <input type="text" class="form-control" id="price" name="price">
                         </div>
                         <div class="col">
                             <label for="price" class="form-label">Quantidade</label>
@@ -79,7 +81,7 @@
                     <div class="row mb-3 mt-5">
                         <div class="col">
                             <label for="featured_image" class="form-label">Imagem Destacada</label>
-                            <input type="file" class="form-control" id="featured_image" name="featured_image" data-tipo="principal" required>
+                            <input type="file" class="form-control" id="featured_image" name="featured_image" data-tipo="principal">
                         </div>
                     </div>
 
@@ -87,7 +89,7 @@
                         <div class="col">
                             <label for="gallery_images" class="form-label">Galeria de Imagens</label>
                             <div id="image-preview"></div>
-                            <input type="file" class="form-control" id="gallery_images" name="gallery_images[]" data-tipo="galeria" multiple required>
+                            <input type="file" class="form-control" id="gallery_images" name="gallery_images[]" data-tipo="galeria" multiple>
                         </div>
                     </div>
 
@@ -96,15 +98,20 @@
                         <textarea class="form-control" name="descricao" id="descricao" rows="3"></textarea>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="submit" class="btn btn-primary submitButton">Salvar</button>
                 </form>
                 
+
             </div>
             <!-- FOOTER -->
             <div class="footer">
                 <%- include('../footer') %>
             </div>
             <!-- FOOTER -->
+
+
+
+
         </div>
     </div>
 
