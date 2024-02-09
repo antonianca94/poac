@@ -16,22 +16,29 @@
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
-                <form action="/products/<%= product.id %>" method="post">
-                    <div class="mb-3">
-                        <label for="categorias" class="form-label">Selecionar Categoria</label>
-                        <select class="form-select" id="categorias" name="categorias">
-                            <% const renderCategories = (categories, parentPath = '') => { %>
-                                <% categories.forEach(category => { %>
-                                    <!-- Renderiza a opção para a categoria atual -->
-                                    <option value="<%= category.id %>" <% if (product.categories_products_id === category.id) { %> selected <% } %>><%= parentPath + category.name %></option>
-                                    <!-- Se a categoria tiver filhos, chama recursivamente a função para renderizá-los -->
-                                    <% if (category.children && category.children.length) { %>
-                                        <% renderCategories(category.children, parentPath + category.name + ' > '); %>
-                                    <% } %>
-                                <% }); %>
-                            <% } %>
-                            <% renderCategories(categoryTree); %>
-                        </select>
+                <form id="updateProduct" action="/products/<%= product.id %>" method="post">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label for="categorias" class="form-label">Selecionar Categoria</label>
+                            <select class="form-select" id="categorias" name="categorias">
+                                <% const renderCategories = (categories, parentPath = '') => { %>
+                                    <% categories.forEach(category => { %>
+                                        <!-- Renderiza a opção para a categoria atual -->
+                                        <option value="<%= category.id %>" <% if (product.categories_products_id === category.id) { %> selected <% } %>><%= parentPath + category.name %></option>
+                                        <!-- Se a categoria tiver filhos, chama recursivamente a função para renderizá-los -->
+                                        <% if (category.children && category.children.length) { %>
+                                            <% renderCategories(category.children, parentPath + category.name + ' > '); %>
+                                        <% } %>
+                                    <% }); %>
+                                <% } %>
+                                <% renderCategories(categoryTree); %>
+                            </select>
+                            <div class="invalid-feedback" id="categoriasError"></div>
+                        </div>
+                        <div class="col">
+                            <label for="code" class="form-label">Código</label>
+                            <input type="text" class="form-control" id="code" name="code" value="<%= product.sku %>" readonly>
+                        </div>
                     </div>
                     
                     <div class="row mb-3">
@@ -48,6 +55,29 @@
                             <input type="number" class="form-control" id="quantity" name="quantity" value="<%= product.quantity %>" required>
                         </div>
                     </div>
+
+                    <div class="row mb-3 mt-5">
+                        <div class="col featured_image_content">
+                            <label for="featured_image" class="form-label">Imagem Destacada</label>
+                            <input type="file" class="form-control" id="featured_image" name="featured_image">
+                            <div class="invalid-feedback" id="featured_imageError"></div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 mt-5">
+                        <div class="col gallery_images_content">
+                            <label for="gallery_images" class="form-label">Galeria de Imagens</label>
+                            <div id="image-preview"></div>
+                            <input type="file" class="form-control" id="gallery_images" name="gallery_images[]" multiple>
+                            <div class="invalid-feedback" id="gallery_imagesError"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 mt-4">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" id="descricao" rows="3"></textarea>
+                        <div class="invalid-feedback" id="descricaoError"></div>
+                    </div>
                     
                     <button type="submit" class="btn btn-primary">Atualizar</button>
                 </form>
@@ -62,12 +92,5 @@
     </div>
 
         <!-- Script para inicializar o Select2 -->
-        <script>
-        
-            $(document).ready(function() {
-                $('#categorias').select2();
-            });
-        </script>
-
 </body>
 </html>
