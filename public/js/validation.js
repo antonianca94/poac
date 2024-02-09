@@ -63,12 +63,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function validateCategorias(e){
         const categorias_select = document.querySelector('.select2-container--default .select2-selection--single');
         if (categorias.value === '' || categorias.value == null) {
-            categorias_select.style.border = "1px solid red"; // Adiciona uma borda vermelha
+            categorias_select.style.border = "1px solid #dc3545"; // Adiciona uma borda vermelha
             categoriasError.classList.add("d-block");
             categoriasError.innerText = 'Insira algo na categoria';
             e.preventDefault();
         } else {
-            categorias_select.style.border = "1px solid green"; // Adiciona uma borda vermelha
+            categorias_select.style.border = "1px solid #198754"; // Adiciona uma borda vermelha
             categoriasError.classList.remove("d-block");
         }
     }
