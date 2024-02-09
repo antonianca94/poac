@@ -6,11 +6,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const categorias = document.getElementById('categorias');
     const price = document.getElementById('price');
     const featured_image = document.getElementById('featured_image');
+    const gallery_images = document.getElementById('gallery_images');
+
 
     const nameError = document.getElementById('nameError');
     const categoriasError = document.getElementById('categoriasError');
     const priceError = document.getElementById('priceError');
     const featured_imageError = document.getElementById('featured_imageError');
+    const gallery_imagesError = document.getElementById('gallery_imagesError');
 
 
     form.addEventListener('submit', (e) => {
@@ -18,20 +21,31 @@ document.addEventListener('DOMContentLoaded', function() {
         validateCategorias(e);
         validatePrice(e);
         validateFeaturedImage(e);
+        validateGalleryImages(e);
     }) 
 
     name.addEventListener('input', validateName);
     name.addEventListener('focus', validateName);
 
-    categorias.addEventListener('input', validateCategorias);
-    categorias.addEventListener('focus', validateCategorias);
-
+    // SELECT2
+    $(categorias).on('change', function(e) {
+        validateCategorias(e);
+    });
+    $(categorias).on('select2:open', function(e) {
+        validateCategorias(e);
+    });
+    // SELECT2
+    
     price.addEventListener('input', validatePrice);
     price.addEventListener('focus', validatePrice);
 
     featured_image.addEventListener('input', validateFeaturedImage);
     featured_image.addEventListener('change', validateFeaturedImage);
     featured_image.addEventListener('focus', validateFeaturedImage);
+
+    gallery_images.addEventListener('input', validateGalleryImages);
+    gallery_images.addEventListener('change', validateGalleryImages);
+    gallery_images.addEventListener('focus', validateGalleryImages);
 
     function validateName(e){
         if (name.value === '' || name.value == null) {
@@ -47,14 +61,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function validateCategorias(e){
+        const categorias_select = document.querySelector('.select2-container--default .select2-selection--single');
         if (categorias.value === '' || categorias.value == null) {
-            categorias.classList.add("is-invalid");
+            categorias_select.style.border = "1px solid red"; // Adiciona uma borda vermelha
             categoriasError.classList.add("d-block");
             categoriasError.innerText = 'Insira algo na categoria';
             e.preventDefault();
         } else {
-            categorias.classList.remove("is-invalid");
-            categorias.classList.add("is-valid");
+            categorias_select.style.border = "1px solid green"; // Adiciona uma borda vermelha
             categoriasError.classList.remove("d-block");
         }
     }
@@ -83,6 +97,20 @@ document.addEventListener('DOMContentLoaded', function() {
             featured_image_input.classList.remove("is-invalid");
             featured_image_input.classList.add("is-valid");
             featured_imageError.classList.remove("d-block");
+        }  
+    }
+
+    function validateGalleryImages(e){
+        const gallery_images_input = document.querySelector('.gallery_images_content input.kv-fileinput-caption');
+        if (gallery_images.value === '' || gallery_images.value == null) {
+            gallery_images_input.classList.add("is-invalid");
+            gallery_imagesError.classList.add("d-block");
+            gallery_imagesError.innerText = 'Insira algo na Imagem Destacada';
+            e.preventDefault();
+        } else {
+            gallery_images_input.classList.remove("is-invalid");
+            gallery_images_input.classList.add("is-valid");
+            gallery_imagesError.classList.remove("d-block");
         }  
     }
 })

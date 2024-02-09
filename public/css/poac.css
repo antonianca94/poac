@@ -157,3 +157,9 @@ input.file-caption-name.form-control.kv-fileinput-caption {
 .file-drop-zone-title {
     font-size: 1.1rem !important;
 }
+
+/* select#categorias {
+    font-size: 0.9rem !important;
+    letter-spacing: -0.3px;
+}
+ */
