@@ -37,6 +37,8 @@ app.use(session({
 }));
 
 app.use('/public', express.static('public'))
+app.use('/uploads', express.static('uploads'));
+
 
 app.use(flash());
 
@@ -227,17 +229,12 @@ app.get('/products/new', isAuthenticated, async (req, res) => {
 
 var Images = upload.any();
 
-app.post('/products', Images, async (req, res) => {
+app.post('/products', Images, async (req, res) => { 
     try {
         // Verificar se algum arquivo foi enviado
-        if (!req.files || req.files.length === 0) {
+        if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
             return res.status(400).send('Nenhum arquivo foi enviado.');
         }
-
-        // Processar os arquivos enviados
-        req.files.forEach(file => {
-            // console.log('Tipo do arquivo:', file);
-        });
 
         // Extrair os dados do produto do corpo da requisição
         const { code, name, price, categorias, quantity } = req.body;
@@ -248,16 +245,27 @@ app.post('/products', Images, async (req, res) => {
             return res.status(401).send('Usuário não autenticado');
         }
 
-        const featured_image = req.files.find(file => file.fieldname === 'featured_image');
-        const gallery_images = req.files
-            .filter(file => file.fieldname === 'gallery_images[]')
-            .map(file => file.filename);
 
-            // console.log(featured_image)
-            // console.log(gallery_images)
+        let result;
+        try {
+            result = await executeQuery('INSERT INTO products (sku, name, price, users_id, quantity, categories_products_id) VALUES (?, ?, ?, ?, ?, ?)', [code, name, price, userId, quantity, categorias]);
 
-        // Lógica para inserir o produto no banco de dados
-        await executeQuery('INSERT INTO products (sku, name, price, users_id, quantity, categories_products_id, featured_image, gallery_images) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [code, name, price, userId, quantity, categorias, featured_image.filename, gallery_images]);
+            // Obter o host e a porta do servidor Express
+            const serverHost = req.get('host');
+            const serverPath = `${req.protocol}://${serverHost}`;
+
+            // Processar os arquivos enviados e inserir na tabela de imagens
+            req.files.forEach(async file => {
+                const name = file.filename;
+                const path = `${serverPath}/uploads/${file.filename}`;
+                const type = file.fieldname;
+                await executeQuery('INSERT INTO images (name, path, type, products_id) VALUES (?, ?, ?, ?)', [name, path, type, result.insertId]);
+            });
+
+        } catch (error) {
+            console.error('Erro ao inserir produto:', error);
+            res.status(500).send('Erro ao inserir produto.');
+        } 
 
         req.flash('success', 'Produto cadastrado com sucesso!');
         res.redirect('/products');
@@ -268,17 +276,42 @@ app.post('/products', Images, async (req, res) => {
 });
 
 
+const path = require('path');
+const fs = require('fs');
 
 app.delete('/products/:id', isAuthenticated, async (req, res) => {
     const productId = req.params.id;
     try {
+        // Obter todas as imagens associadas ao produto
+        const images = await executeQuery('SELECT * FROM images WHERE products_id = ?', [productId]);
+
+        // Excluir cada imagem associada ao produto
+        for (const image of images) {
+            await executeQuery('DELETE FROM images WHERE id = ?', [image.id]);
+            // Remova os arquivos de imagem do sistema de arquivos, se necessário
+            const filePath = path.join(__dirname, 'uploads', image.name);
+            try {
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                    console.log(`${image.name} excluído com sucesso.`);
+                } else {
+                    console.error(`${image.name} não encontrado.`);
+                }
+            } catch (err) {
+                console.error(`Erro ao excluir ${image.name}:`, err);
+            }
+        }
+
+        // Excluir o produto
         await executeQuery('DELETE FROM products WHERE id = ?', [productId]);
+        
         res.status(200).json({ message: 'Produto excluído com sucesso!' });
     } catch (error) {
         console.error('Erro ao excluir produto:', error);
         res.status(500).json({ error: 'Erro ao excluir produto' });
     }
 });
+
 
 app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
     const productId = req.params.id;
@@ -495,8 +528,6 @@ app.get('/categories/:id/edit', isAuthenticated, async (req, res) => {
         res.status(500).send('Erro ao buscar categoria para edição');
     }
 });
-
-
 
 app.post('/categories/:id', async (req, res) => {
     const categoryId = req.params.id;

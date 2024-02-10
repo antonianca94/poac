@@ -90,7 +90,56 @@
             <!-- FOOTER -->
         </div>
     </div>
+    <script>
+        $(".products_edit #featured_image").fileinput({
+            theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
+            language: 'pt-BR', // Define o idioma para português do Brasil
+            showRemove: true, // Adiciona botão de remoção para cada foto
+            showUpload: false, // Define se o botão de upload deve ser exibido
+            previewFileType: 'image', // Define o tipo de arquivo que deve ser pré-visualizado (neste caso, imagens)
+            allowedFileExtensions: ['jpg', 'jpeg', 'png', 'gif'], // Define as extensões de arquivo permitidas
+            browseClass: 'btn btn-primary', // Define a classe do botão de navegação
+            browseLabel: 'Selecionar imagens', // Define o rótulo do botão de navegação
+            browseIcon: '<i class="bi bi-upload"></i>', // Define o ícone do botão de navegação
+            maxFileCount: 1, // Define o número máximo de arquivos permitidos
+            validateInitialCount: true, // Define se o número inicial de arquivos deve ser validado
+            overwriteInitial: false, // Define se os arquivos iniciais devem ser substituídos
+            initialPreviewAsData: true, // Define se as pré-visualizações iniciais devem ser tratadas como dados brutos
+            initialPreviewFileType: 'image', // Define o tipo de arquivo para pré-visualizações iniciais
+            msgProcessing: 'Processando...', // Personalize o texto de processamento aqui
+            initialPreview: [
+            'http://localhost:3000/uploads/<%= product.featured_image %>'
+            ]
+        });
 
+
+        var imageNamesString = '<%=product.gallery_images%>';
+
+        console.log(imageNamesString);
+
+        $(".products_edit #gallery_images").fileinput({
+            theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
+            language: 'pt-BR', // Define o idioma para português do Brasil
+            showRemove: true, // Adiciona botão de remoção para cada foto
+            showUpload: false, // Define se o botão de upload deve ser exibido
+            showUpload: false, // Define se o botão de upload deve ser exibido
+            previewFileType: 'image', // Define o tipo de arquivo que deve ser pré-visualizado (neste caso, imagens)
+            allowedFileExtensions: ['jpg', 'jpeg', 'png', 'gif'], // Define as extensões de arquivo permitidas
+            browseClass: 'btn btn-primary', // Define a classe do botão de navegação
+            browseLabel: 'Selecionar imagens', // Define o rótulo do botão de navegação
+            browseIcon: '<i class="bi bi-upload"></i>', // Define o ícone do botão de navegação
+            maxFileCount: 10, // Define o número máximo de arquivos permitidos
+            validateInitialCount: true, // Define se o número inicial de arquivos deve ser validado
+            overwriteInitial: false, // Define se os arquivos iniciais devem ser substituídos
+            initialPreviewAsData: true, // Define se as pré-visualizações iniciais devem ser tratadas como dados brutos
+            initialPreviewFileType: 'image', // Define o tipo de arquivo para pré-visualizações iniciais
+            initialPreviewConfig: [
+            ],
+            msgProcessing: 'Processando...', // Personalize o texto de processamento aqui
+             
+        });
+
+    </script>
         <!-- Script para inicializar o Select2 -->
 </body>
 </html>
