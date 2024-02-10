@@ -12,12 +12,26 @@ const session = require('express-session');
 
 const multer = require('multer');
 
+
+function generateRandomCode(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/') // O diretório onde as imagens serão armazenadas
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname); // Nome do arquivo (timestamp + nome original)
+        const randomCode = generateRandomCode(12); // Gera um código aleatório com 6 dígitos
+        const extension = file.originalname.split('.').pop(); // Obtém a extensão do arquivo
+        const newFilename = randomCode + '.' + extension; // Nome do arquivo (código aleatório + extensão)
+        cb(null, newFilename); 
     }
 });
 
