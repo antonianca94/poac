@@ -91,7 +91,8 @@
         </div>
     </div>
     <script>
-    
+    $(document).ready(function() {
+
         $(".products_edit #featured_image").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
             language: 'pt-BR', // Define o idioma para português do Brasil
@@ -115,13 +116,13 @@
 
 
         var galleryImagePaths = JSON.parse('<%- galleryImagePaths %>');
+        var galleryImageConfig = JSON.parse('<%- galleryImageConfig %>');
 
 
         $(".products_edit #gallery_images").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
             language: 'pt-BR', // Define o idioma para português do Brasil
             showRemove: true, // Adiciona botão de remoção para cada foto
-            showUpload: false, // Define se o botão de upload deve ser exibido
             showUpload: false, // Define se o botão de upload deve ser exibido
             previewFileType: 'image', // Define o tipo de arquivo que deve ser pré-visualizado (neste caso, imagens)
             allowedFileExtensions: ['jpg', 'jpeg', 'png', 'gif'], // Define as extensões de arquivo permitidas
@@ -130,14 +131,23 @@
             browseIcon: '<i class="bi bi-upload"></i>', // Define o ícone do botão de navegação
             maxFileCount: 10, // Define o número máximo de arquivos permitidos
             validateInitialCount: true, // Define se o número inicial de arquivos deve ser validado
-            overwriteInitial: false, // Define se os arquivos iniciais devem ser substituídos
+            overwriteInitial: true, // Define se os arquivos iniciais devem ser substituídos
             initialPreviewAsData: true, // Define se as pré-visualizações iniciais devem ser tratadas como dados brutos
             initialPreviewFileType: 'image', // Define o tipo de arquivo para pré-visualizações iniciais
             initialPreviewConfig: [
             ],
             msgProcessing: 'Processando...', // Personalize o texto de processamento aqui
-            initialPreview: galleryImagePaths 
-        });
+            initialPreview: galleryImagePaths,
+            initialPreviewConfig: galleryImageConfig
+
+        }).on("filepredelete", function(jqXHR) {
+        var abort = true;
+        if (confirm("Tem certeza de que deseja apagar esta imagem?")) {
+            abort = false;
+        }
+        return abort;
+    });
+});
 
     </script>
         <!-- Script para inicializar o Select2 -->

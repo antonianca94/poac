@@ -361,11 +361,22 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
         const galleryImages = await executeQuery(galleryImagesQuery, [productId]);
         const galleryImagePaths = galleryImages.map(image => image.path);
 
+        const galleryImageConfig = galleryImages.map(image => {
+            return {
+                caption: image.name,
+                url: image.path,
+                key: image.id,
+              
+
+            };
+        });
+
         res.render('products/edit', { 
             pageTitle: 'Editar Produto', 
             product, 
             featuredImage,
             galleryImagePaths: JSON.stringify(galleryImagePaths), // Convertendo para uma string JSON
+            galleryImageConfig: JSON.stringify(galleryImageConfig), // Convertendo para uma string JSON
             categories, 
             categoryTree, 
             username: req.user.username 
@@ -374,6 +385,34 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
         res.status(500).send('Erro ao buscar produto para edição');
     }
 });
+
+// BOTÃO DA IMAGEM PARA EXCLUIR
+app.post('/uploads/:filename', async (req, res) => {
+    const filename = req.params.filename;
+    try {
+        // Buscar a imagem no banco de dados
+        const [image] = await executeQuery('SELECT * FROM images WHERE name = ?', [filename]);
+
+        // Verificar se a imagem existe
+        if (!image) {
+            return res.status(404).json({ error: 'Imagem não encontrada' });
+        }
+
+        // Excluir a imagem do banco de dados
+        await executeQuery('DELETE FROM images WHERE name = ?', [filename]);
+
+        // Remover o arquivo de imagem do sistema de arquivos
+        const imagePath = path.join(__dirname, 'uploads', image.name);
+        fs.unlinkSync(imagePath);
+
+        // Enviar uma resposta de sucesso ao cliente
+        res.status(200).json({ message: 'Imagem excluída com sucesso' });
+    } catch (error) {
+        console.error('Erro ao excluir imagem:', error);
+        res.status(500).json({ error: 'Erro ao excluir imagem' });
+    }
+});
+// BOTÃO DA IMAGEM PARA EXCLUIR
 
 
 app.post('/products/:id', async (req, res) => {
