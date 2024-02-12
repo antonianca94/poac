@@ -96,7 +96,7 @@
         $(".products_edit #featured_image").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
             language: 'pt-BR', // Define o idioma para português do Brasil
-            showRemove: true, // Adiciona botão de remoção para cada foto
+            showRemove: false, // Adiciona botão de remoção para cada foto
             showUpload: false, // Define se o botão de upload deve ser exibido
             previewFileType: 'image', // Define o tipo de arquivo que deve ser pré-visualizado (neste caso, imagens)
             allowedFileExtensions: ['jpg', 'jpeg', 'png', 'gif'], // Define as extensões de arquivo permitidas
@@ -122,7 +122,7 @@
         $(".products_edit #gallery_images").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
             language: 'pt-BR', // Define o idioma para português do Brasil
-            showRemove: true, // Adiciona botão de remoção para cada foto
+            showRemove: false, // Adiciona botão de remoção para cada foto
             showUpload: false, // Define se o botão de upload deve ser exibido
             previewFileType: 'image', // Define o tipo de arquivo que deve ser pré-visualizado (neste caso, imagens)
             allowedFileExtensions: ['jpg', 'jpeg', 'png', 'gif'], // Define as extensões de arquivo permitidas
@@ -131,7 +131,7 @@
             browseIcon: '<i class="bi bi-upload"></i>', // Define o ícone do botão de navegação
             maxFileCount: 10, // Define o número máximo de arquivos permitidos
             validateInitialCount: true, // Define se o número inicial de arquivos deve ser validado
-            overwriteInitial: true, // Define se os arquivos iniciais devem ser substituídos
+            overwriteInitial: false, // Define se os arquivos iniciais devem ser substituídos
             initialPreviewAsData: true, // Define se as pré-visualizações iniciais devem ser tratadas como dados brutos
             initialPreviewFileType: 'image', // Define o tipo de arquivo para pré-visualizações iniciais
             initialPreviewConfig: [
