@@ -91,6 +91,7 @@
         </div>
     </div>
     <script>
+    
         $(".products_edit #featured_image").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
             language: 'pt-BR', // Define o idioma para português do Brasil
@@ -108,14 +109,13 @@
             initialPreviewFileType: 'image', // Define o tipo de arquivo para pré-visualizações iniciais
             msgProcessing: 'Processando...', // Personalize o texto de processamento aqui
             initialPreview: [
-            'http://localhost:3000/uploads/<%= product.featured_image %>'
+            '<%= featuredImage.path %>'
             ]
         });
 
 
-        var imageNamesString = '<%=product.gallery_images%>';
+        var galleryImagePaths = JSON.parse('<%- galleryImagePaths %>');
 
-        console.log(imageNamesString);
 
         $(".products_edit #gallery_images").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
@@ -136,7 +136,7 @@
             initialPreviewConfig: [
             ],
             msgProcessing: 'Processando...', // Personalize o texto de processamento aqui
-             
+            initialPreview: galleryImagePaths 
         });
 
     </script>

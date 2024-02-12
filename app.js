@@ -352,9 +352,20 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
 
         const categoryTree = buildCategoryTree(parentCategories, allCategories);
 
+        // Consulta para obter a imagem destacada (featured_image) do produto
+        const featuredImageQuery = 'SELECT * FROM images WHERE products_id = ? AND type = "featured_image"';
+        const [featuredImage] = await executeQuery(featuredImageQuery, [productId]);
+
+        // Consulta para obter as imagens da galeria (gallery_images) do produto
+        const galleryImagesQuery = 'SELECT * FROM images WHERE products_id = ? AND type = "gallery_images[]"';
+        const galleryImages = await executeQuery(galleryImagesQuery, [productId]);
+        const galleryImagePaths = galleryImages.map(image => image.path);
+
         res.render('products/edit', { 
             pageTitle: 'Editar Produto', 
             product, 
+            featuredImage,
+            galleryImagePaths: JSON.stringify(galleryImagePaths), // Convertendo para uma string JSON
             categories, 
             categoryTree, 
             username: req.user.username 
