@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= pageTitle %></title>
+    <script src="/public/js/users/update.js"></script>
+
 </head>
 <body>
     <%- include('../header') %>
@@ -16,18 +18,20 @@
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
-                <form action="/users/<%= user.id %>" method="post">
+                <form action="/users/<%= user.id %>" method="post" id="updateUser">
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required>
+                                <div class="invalid-feedback" id="nameError"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label for="username" class="form-label">Usuário</label>
                                 <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>" required>
+                                <div class="invalid-feedback" id="usernameError"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -38,6 +42,7 @@
                                         <option value="<%= role.id %>" <%= role.id === user.roles_id ? 'selected' : '' %>><%= role.name %></option>
                                     <% }); %>
                                 </select>
+                                <div class="invalid-feedback" id="roleError"></div>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -45,6 +50,7 @@
                                 <div class="form-group">
                                     <label for="name" class="form-label">Senha</label>
                                     <input type="text" class="form-control" id="password" name="password" value="<%= user.password %>"  required>
+                                    <div class="invalid-feedback" id="passwordError"></div>
                                 </div>
                             </div>
     
