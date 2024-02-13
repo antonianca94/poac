@@ -366,8 +366,8 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
                 caption: image.name,
                 url: image.path,
                 key: image.id,
-              
-
+                tipo: image.type,
+                products_id: image.products_id
             };
         });
 
@@ -412,10 +412,43 @@ app.post('/uploads/:filename', async (req, res) => {
         res.status(500).json({ error: 'Erro ao excluir imagem' });
     }
 });
+
+// app.post('/uploads', upload.single('gallery_images[]'), async (req, res) => {
+
+// // console.log(productId)
+//     const body = req.body; // Acessando o arquivo enviado
+//     console.log(body)
+
+    
+//           // Obter o host e a porta do servidor Express
+//         //   const serverHost = req.get('host');
+//         //   const serverPath = `${req.protocol}://${serverHost}`;
+
+//           // Processar os arquivos enviados e inserir na tabela de imagens
+    
+        
+
+//             //   const [image] = await executeQuery('SELECT * FROM images WHERE name = ?', [name]);
+// // console.log(image);
+//             //   try {
+
+//             // console.log(image)
+//             //   const path = `${serverPath}/uploads/${file.filename}`;
+//             //   const type = file.fieldname;
+//             // await executeQuery('INSERT INTO images (name, path, type, products_id) VALUES (?, ?, ?, ?)', [name, path, type, image.products_id]);
+//             //   } catch {
+
+                
+//             //   }
+ 
+//     res.status(200).json({ message: 'Upload bem-sucedido.'});
+
+//     // Faça algo com fileId
+// });
 // BOTÃO DA IMAGEM PARA EXCLUIR
 
+app.post('/products/:id', Images, async (req, res) => {
 
-app.post('/products/:id', async (req, res) => {
     const productId = req.params.id;
     const { name, price, categorias, quantity } = req.body;
 
@@ -431,6 +464,18 @@ app.post('/products/:id', async (req, res) => {
 
         // Atualiza a categoria do produto
         await executeQuery('UPDATE products SET categories_products_id = ? WHERE id = ?', [categorias, productId]);
+
+        // Obter o host e a porta do servidor Express
+        const serverHost = req.get('host');
+        const serverPath = `${req.protocol}://${serverHost}`;
+
+        // Processar os arquivos enviados e inserir na tabela de imagens
+        req.files.forEach(async file => {
+            const name = file.filename;
+            const path = `${serverPath}/uploads/${file.filename}`;
+            const type = file.fieldname;
+            await executeQuery('INSERT INTO images (name, path, type, products_id) VALUES (?, ?, ?, ?)', [name, path, type, productId]);
+        });
 
         req.flash('success', 'Produto atualizado com sucesso!');
         res.redirect('/products');

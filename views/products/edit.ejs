@@ -11,12 +11,12 @@
         <%- include('../sidebar',{ pageType: 'Produtos' }) %>
         <div class="container mb-5 m-4">
             <div class="title-section">
-                <div class="d-flex justify-content-start align-items-center mb-4">
+                <div class="d-flex justify-content-start align-items-center mb-4" >
                     <h4 class="m-0"><%= pageTitle %></h4>
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
-                <form id="updateProduct" action="/products/<%= product.id %>" method="post">
+                <form id="updateProduct" action="/products/<%= product.id %>" method="post" enctype="multipart/form-data">
                     <div class="row mb-3">
                         <div class="col">
                             <label for="categorias" class="form-label">Selecionar Categoria</label>
@@ -111,19 +111,23 @@
             msgProcessing: 'Processando...', // Personalize o texto de processamento aqui
             initialPreview: [
             '<%= featuredImage.path %>'
-            ]
+            ],initialPreviewShowDelete: false,
+
         });
 
 
         var galleryImagePaths = JSON.parse('<%- galleryImagePaths %>');
         var galleryImageConfig = JSON.parse('<%- galleryImageConfig %>');
 
-
         $(".products_edit #gallery_images").fileinput({
             theme: 'bs5', // Especifique o tema que deseja usar (por exemplo, 'fas' para Font Awesome)
             language: 'pt-BR', // Define o idioma para português do Brasil
             showRemove: false, // Adiciona botão de remoção para cada foto
             showUpload: false, // Define se o botão de upload deve ser exibido
+            uploadUrl: '/uploads',
+            
+            // autoReplace: true,
+
             previewFileType: 'image', // Define o tipo de arquivo que deve ser pré-visualizado (neste caso, imagens)
             allowedFileExtensions: ['jpg', 'jpeg', 'png', 'gif'], // Define as extensões de arquivo permitidas
             browseClass: 'btn btn-primary', // Define a classe do botão de navegação
@@ -134,11 +138,12 @@
             overwriteInitial: false, // Define se os arquivos iniciais devem ser substituídos
             initialPreviewAsData: true, // Define se as pré-visualizações iniciais devem ser tratadas como dados brutos
             initialPreviewFileType: 'image', // Define o tipo de arquivo para pré-visualizações iniciais
-            initialPreviewConfig: [
-            ],
             msgProcessing: 'Processando...', // Personalize o texto de processamento aqui
             initialPreview: galleryImagePaths,
-            initialPreviewConfig: galleryImageConfig
+            initialPreviewConfig: galleryImageConfig,
+            initialPreviewShowDelete: true,
+            showUploadStats: true
+
 
         }).on("filepredelete", function(jqXHR) {
         var abort = true;
@@ -147,6 +152,14 @@
         }
         return abort;
     });
+
+
+
+//     var plugin = jQuery('.products_edit #gallery_images').data('fileinput');
+// console.log(plugin); // get initialPreview
+
+
+
 });
 
     </script>
