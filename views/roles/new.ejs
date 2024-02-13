@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= pageTitle %></title>
+    <script src="/public/js/roles/send.js"></script>
 </head>
 <body>
     <%- include('../header') %>
@@ -16,28 +17,20 @@
                 </div>
             </div>
             <div class="content-section bg-white bg-body rounded p-4">
-                <form action="/roles" method="post">
+                <form action="/roles" method="post" id="sendRoles">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name" class="form-label">Nome</label>
-                                    <input type="text" class="form-control <% if(errors && errors.name) { %> is-invalid <% } %>" id="name" name="name">
-                                    <%  if(errors && errors.name) { %>
-                                        <span class="invalid-feedback" style="display: block;">
-                                            <%=  errors.name.msg  %>
-                                        </span>
-                                    <% } %>
+                                    <input type="text" class="form-control" id="name" name="name">
+                                    <div class="invalid-feedback" id="nameError"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="description" class="form-label">Descrição</label>
-                                <input type="text" class="form-control <% if(errors && errors.description) { %> is-invalid <% } %>" id="description" name="description">
-                                <%  if(errors && errors.description) { %>
-                                    <span class="invalid-feedback" style="display: block;">
-                                        <%=  errors.description.msg  %>
-                                    </span>
-                                <% } %>
+                                <input type="text" class="form-control" id="description" name="description">
+                                <div class="invalid-feedback" id="descriptionError"></div>
                             </div>
                         </div>
                     </div>

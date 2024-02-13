@@ -1,10 +1,6 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const {check, validationResult} = require('express-validator');
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-app.use(bodyParser.urlencoded({extended: true}));
 
 const mysql = require('mysql2/promise');
 const flash = require('express-flash');
@@ -500,33 +496,23 @@ app.get('/roles', isAuthenticated, async (req, res) => {
 });
 
 app.get('/roles/new', isAuthenticated, (req, res) => {
-    res.render('roles/new', { pageTitle: 'Inserir Role' , errors: '', username: req.user.username });
+    res.render('roles/new', { pageTitle: 'Inserir Role' , username: req.user.username });
 });
 
-app.post('/roles',[
-    check('name').notEmpty().withMessage('Nome não pode estar vazio'),
-    check('description').notEmpty().withMessage('Descrição não pode estar vazia')
-], async (req, res) => {
+app.post('/roles', async (req, res) => {
     const { name, description } = req.body;
     const userId = req.session.passport.user; 
 
     if (!userId) {
         return res.status(401).send('Usuário não autenticado');
     }
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.render('roles/new', { pageTitle: 'Inserir Role', errors: errors.mapped(), username: req.user.username });
-    }
-    else{
-        try {
-            await executeQuery('INSERT INTO roles (name, description) VALUES (?, ?)', [name, description]);
-            req.flash('success', 'Role cadastrada com sucesso!');
-            res.redirect('/roles');
-        } catch (error) {
-            console.error('Erro ao cadastrar a role:', error);
-            res.status(500).send('Erro ao cadastrar a role');
-        }
+    try {
+        await executeQuery('INSERT INTO roles (name, description) VALUES (?, ?)', [name, description]);
+        req.flash('success', 'Role cadastrada com sucesso!');
+        res.redirect('/roles');
+    } catch (error) {
+        console.error('Erro ao cadastrar a role:', error);
+        res.status(500).send('Erro ao cadastrar a role');
     }
 
 });
@@ -552,28 +538,19 @@ app.get('/roles/:id/edit', isAuthenticated, async (req, res) => {
     }
 });
 
-app.post('/roles/:id', 
-[
-    check('name').notEmpty().withMessage('Nome não pode estar vazio'),
-    check('description').notEmpty().withMessage('Descrição não pode estar vazia')
-],
-async (req, res) => {
+app.post('/roles/:id', async (req, res) => {
     const roleId = req.params.id;
     const [role] = await executeQuery('SELECT * FROM roles WHERE id = ?', [roleId]);
     const { name, description } = req.body;
-    const errors = validationResult(req);
-    
-    if (!errors.isEmpty()) {
-        return res.render('roles/edit',  { pageTitle: 'Editar Role', role, errors: errors.mapped(), username: req.user.username });
-    } else{
-        try {
-            await executeQuery('UPDATE roles SET name = ?, description = ? WHERE id = ?', [name, description,roleId]);
-            req.flash('success', 'Role atualizada com sucesso!');
-            res.redirect('/roles');
-        } catch (error) {
-            res.status(500).send('Erro ao atualizar a role');
-        }
+
+    try {
+        await executeQuery('UPDATE roles SET name = ?, description = ? WHERE id = ?', [name, description,roleId]);
+        req.flash('success', 'Role atualizada com sucesso!');
+        res.redirect('/roles');
+    } catch (error) {
+        res.status(500).send('Erro ao atualizar a role');
     }
+
 });
 // ROLES
 
