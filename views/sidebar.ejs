@@ -4,7 +4,7 @@
             <li class="nav-item">
                 <a href="/dashboard" class="nav-link <%= pageType === 'Painel' ? 'active' : '' %>" aria-current="page">
                     <i class="bi bi-house"></i>
-                    Painel
+                    Painel 
                 </a>
             </li>
             <li class="nav-item">
@@ -13,24 +13,30 @@
                     Produtos
                 </a>
             </li>
+            <% if (userRole === 1) { %> 
             <li class="nav-item">
                 <a href="/categories" class="nav-link <%= pageType === 'Categorias' ? 'active' : '' %>" aria-current="page">
                     <i class="bi bi-card-list"></i>
                     Categorias
                 </a>
             </li>
+            <% } %> 
+            <% if (userRole === 1) { %> 
             <li class="nav-item">
                 <a href="/roles" class="nav-link <%= pageType === 'Roles' ? 'active' : '' %>" aria-current="page">
                     <i class="bi bi-person"></i>
                     Roles
                 </a>
             </li>
+            <% } %> 
+            <% if (userRole === 1) { %> 
             <li class="nav-item">
                 <a href="/users" class="nav-link <%= pageType === 'Usuários' ? 'active' : '' %>" aria-current="page">
                     <i class="bi bi-people"></i>
                     Usuários
                 </a>
             </li>
+            <% } %> 
         </ul>
     </div>
 </div>

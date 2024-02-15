@@ -233,7 +233,7 @@ async function executeQuery(sql, values = []) {
 
 
 app.get('/dashboard', async (req, res) => {
-    res.render('dashboard/index', { pageTitle: 'Painel',username: req.user.username });
+    res.render('dashboard/index', { pageTitle: 'Painel',username: req.user.username, userRole: req.user.roles_id });
 
 });
 
@@ -242,7 +242,7 @@ app.get('/products', isAuthenticated, async (req, res) => {
     try {
         const products = await executeQuery('SELECT products.id, products.sku, products.name, products.price,  products.quantity, categories_products.name AS category_name FROM products INNER JOIN categories_products ON products.categories_products_id = categories_products.id');
         const successMessage = req.flash('success'); 
-        res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username });
+        res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username, userRole: req.user.roles_id });
 
     } catch (error) {
         res.status(500).send('Erro ao buscar produtos');
@@ -278,7 +278,8 @@ app.get('/products/new', isAuthenticated, async (req, res) => {
         res.render('products/new', { 
             pageTitle: 'Inserir Produto', 
             categoryTree: categoryTree, 
-            username: req.user.username 
+            username: req.user.username,
+            userRole: req.user.roles_id
         });
     } catch (error) {
         res.status(500).send('Erro ao carregar categorias para criar um novo produto');
@@ -412,7 +413,8 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
                 url: image.path,
                 key: image.id,
                 tipo: image.type,
-                products_id: image.products_id
+                products_id: image.products_id,
+                
             };
         });
 
@@ -424,7 +426,8 @@ app.get('/products/:id/edit', isAuthenticated, async (req, res) => {
             galleryImageConfig: JSON.stringify(galleryImageConfig), // Convertendo para uma string JSON
             categories, 
             categoryTree, 
-            username: req.user.username 
+            username: req.user.username,
+            userRole: req.user.roles_id
         });
     } catch (error) {
         res.status(500).send('Erro ao buscar produto para edição');
@@ -537,7 +540,7 @@ app.get('/roles', isAuthenticated, async (req, res) => {
     try {
         const roles = await executeQuery('SELECT * FROM roles');
         const successMessage = req.flash('success'); 
-        res.render('roles/index', { pageTitle: 'Roles', roles, successMessage, username: req.user.username });
+        res.render('roles/index', { pageTitle: 'Roles', roles, successMessage, username: req.user.username, userRole: req.user.roles_id });
 
     } catch (error) {
         res.status(500).send('Erro ao buscar roles');
@@ -545,7 +548,7 @@ app.get('/roles', isAuthenticated, async (req, res) => {
 });
 
 app.get('/roles/new', isAuthenticated, (req, res) => {
-    res.render('roles/new', { pageTitle: 'Inserir Role' , username: req.user.username });
+    res.render('roles/new', { pageTitle: 'Inserir Role' , username: req.user.username, userRole: req.user.roles_id });
 });
 
 app.post('/roles', async (req, res) => {
@@ -581,7 +584,7 @@ app.get('/roles/:id/edit', isAuthenticated, async (req, res) => {
     const roleId = req.params.id;
     try {
         const [role] = await executeQuery('SELECT * FROM roles WHERE id = ?', [roleId]);
-        res.render('roles/edit', { pageTitle: 'Editar Role', role, errors: '', username: req.user.username });
+        res.render('roles/edit', { pageTitle: 'Editar Role', role, errors: '', username: req.user.username, userRole: req.user.roles_id });
     } catch (error) {
         res.status(500).send('Erro ao buscar role para edição');
     }
@@ -608,7 +611,7 @@ app.get('/categories', isAuthenticated, async (req, res) => {
     try {
         const categories = await executeQuery('SELECT * FROM categories_products');
         const successMessage = req.flash('success'); 
-        res.render('categories/index', { pageTitle: 'Categorias', categories, successMessage, username: req.user.username });
+        res.render('categories/index', { pageTitle: 'Categorias', categories, successMessage, username: req.user.username, userRole: req.user.roles_id });
 
     } catch (error) {
         res.status(500).send('Erro ao buscar categorias');
@@ -618,7 +621,7 @@ app.get('/categories', isAuthenticated, async (req, res) => {
 app.get('/categories/new', isAuthenticated, async(req, res) => {
     const categories = await executeQuery('SELECT * FROM categories_products');
 
-    res.render('categories/new', { pageTitle: 'Inserir Categoria' , categories, username: req.user.username });
+    res.render('categories/new', { pageTitle: 'Inserir Categoria' , categories, username: req.user.username, userRole: req.user.roles_id });
 });
 
 app.post('/categories', async (req, res) => {
@@ -656,7 +659,7 @@ app.get('/categories/:id/edit', isAuthenticated, async (req, res) => {
         const categories = await executeQuery('SELECT * FROM categories_products');
         const [category] = await executeQuery('SELECT * FROM categories_products WHERE id = ?', [categoryId]);
 
-        res.render('categories/edit', { pageTitle: 'Editar Categoria', category, categories, username: req.user.username });
+        res.render('categories/edit', { pageTitle: 'Editar Categoria', category, categories, username: req.user.username, userRole: req.user.roles_id });
     } 
     
     catch (error) {
@@ -683,7 +686,7 @@ app.get('/users', isAuthenticated, async (req, res) => {
     try {
         const users = await executeQuery('SELECT users.*, roles.name AS role_name FROM users INNER JOIN roles ON users.roles_id = roles.id');
         const successMessage = req.flash('success'); 
-        res.render('users/index', { pageTitle: 'Usuários', users, successMessage, username: req.user.username });
+        res.render('users/index', { pageTitle: 'Usuários', users, successMessage, username: req.user.username, userRole: req.user.roles_id });
 
     } catch (error) {
         res.status(500).send('Erro ao buscar usuários');
@@ -692,7 +695,7 @@ app.get('/users', isAuthenticated, async (req, res) => {
 
 app.get('/users/new', isAuthenticated, async (req, res) => {
     const roles = await executeQuery('SELECT * FROM roles');
-    res.render('users/new', { pageTitle: 'Inserir Usuário' , roles, username: req.user.username });
+    res.render('users/new', { pageTitle: 'Inserir Usuário' , roles, username: req.user.username, userRole: req.user.roles_id });
 });
 
 app.post('/users', async (req, res) => {
@@ -730,7 +733,7 @@ app.get('/users/:id/edit', isAuthenticated, async (req, res) => {
         const [user] = await executeQuery('SELECT * FROM users WHERE id = ?', [userId]);
         const [role] = await executeQuery('SELECT * FROM roles WHERE id = ?', [user.roles_id]);
         const roles = await executeQuery('SELECT * FROM roles');
-        res.render('users/edit', { pageTitle: 'Editar Usuário', user, role, roles, username: req.user.username });
+        res.render('users/edit', { pageTitle: 'Editar Usuário', user, role, roles, username: req.user.username, userRole: req.user.roles_id });
     } catch (error) {
         res.status(500).send('Erro ao buscar usuário para edição');
     }
