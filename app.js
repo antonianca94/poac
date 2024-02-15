@@ -156,10 +156,59 @@ app.post('/register', async (req, res) => {
 // Middleware para verificar autenticação
 const isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
-        return next();
+        const userRole = req.user.roles_id;
+        const allowedRoutes = getRoutesForRole(userRole);
+        const requestedRoute = req.originalUrl;
+
+        // Verifica se o usuário tem permissão para acessar a rota solicitada
+        const isRouteAllowed = allowedRoutes.some(route => {
+            // Verifica se a rota solicitada corresponde ao padrão da rota permitida
+            const regex = new RegExp(`^${route.replace(/:\w+/g, '\\w+')}$`);
+            return regex.test(requestedRoute);
+        });
+
+        if (isRouteAllowed) {
+            return next(); // Prossiga para a próxima rota se for permitida
+        } else {
+            return res.redirect('/dashboard');
+        }
     }
     res.redirect('/login');
 };
+
+
+const getRoutesForRole = (roleId) => {
+    switch (roleId) {
+        case 1: // Role de administrador
+            return [
+                '/dashboard',
+                '/products',
+                '/products/new',
+                '/products/:id/edit',
+                '/categories',
+                '/categories/new',
+                '/categories/:id/edit',
+                '/roles',
+                '/roles/new',
+                '/roles/:id/edit',
+                '/users',
+                '/users/new',
+                '/users/:id/edit'
+                // Adicione outras rotas permitidas para o administrador conforme necessário
+            ];
+        case 6: // Role de usuário normal
+            return [
+                '/dashboard',
+                '/products',
+                '/products/new',
+                '/products/:id/edit'
+                // Adicione outras rotas permitidas para o usuário normal conforme necessário
+            ];
+        default:
+            return [];
+    }
+};
+
 
 async function executeQuery(sql, values = []) {
     const connection = await mysql.createConnection({
@@ -183,7 +232,7 @@ async function executeQuery(sql, values = []) {
 }
 
 
-app.get('/dashboard', isAuthenticated, async (req, res) => {
+app.get('/dashboard', async (req, res) => {
     res.render('dashboard/index', { pageTitle: 'Painel',username: req.user.username });
 
 });
