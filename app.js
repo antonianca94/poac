@@ -154,9 +154,17 @@ app.post('/register', async (req, res) => {
 // REGISTRO USER
 
 // HOME
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+
+    const productsQuery = `
+    SELECT p.*, i.path AS imagePath
+    FROM products p
+    LEFT JOIN images i ON p.id = i.products_id
+    WHERE i.type = 'featured_image'
+`;
+const products = await executeQuery(productsQuery);
     // Renderiza o arquivo login.ejs
-    res.render('home', { pageTitle: 'Home', message: req.flash('error') });
+    res.render('home', { pageTitle: 'Home', message: req.flash('error'), products });
 });
 // HOME 
 
