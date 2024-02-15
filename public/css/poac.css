@@ -166,3 +166,6 @@ input.file-caption-name.form-control.kv-fileinput-caption {
     letter-spacing: -0.3px;
 }
  */
+ .carousel-item {
+    height: 350px;
+}

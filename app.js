@@ -63,7 +63,7 @@ app.get('/logout', (req, res) => {
             console.error('Erro ao fazer logout:', err);
             return res.status(500).send('Erro ao fazer logout');
         }
-        res.redirect('/login'); // Redireciona para a página de login
+        res.redirect('/'); // Redireciona para a página de login
     });
 });
 
@@ -152,6 +152,13 @@ app.post('/register', async (req, res) => {
     }
 });
 // REGISTRO USER
+
+// HOME
+app.get('/', (req, res) => {
+    // Renderiza o arquivo login.ejs
+    res.render('home', { pageTitle: 'Home', message: req.flash('error') });
+});
+// HOME 
 
 // Middleware para verificar autenticação
 const isAuthenticated = (req, res, next) => {
