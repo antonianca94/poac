@@ -33,7 +33,7 @@
                     <a href="#" class="nav-item nav-link text-light">Sobre</a>
                     <!-- <a href="#" class="nav-item nav-link disabled" tabindex="-1">Reports</a> -->
                 </div>
-                <div class="navbar-nav ms-auto">
+                <div class="col-6 ms-auto">
                     <form class="d-flex">
                         <div class="input-group">                    
                             <input type="text" class="form-control" placeholder="Pesquisar">
@@ -50,6 +50,8 @@
         </div>
         
     </nav>
+    
+
     
 
     <div class="container-fluid p-0">
@@ -93,12 +95,12 @@
     <div class="container mt-5 px-0">
         <div class="row gx-5">
             <div class="col">
-                <div class="p-0 border bg-white">
+                <div class="category-box p-0 bg-white rounded">
                     <div class="row g-0">
                         <div class="col-md-4 d-flex justify-content-center align-items-center">
-                            <i class="bi bi-0-circle"></i>
+                            <img src="/uploads/lychee.png" class="d-block w-50">
                         </div>
-                        <div class="col-md-8 d-flex justify-content-center align-items-center">
+                        <div class="col-md-8">
                             <div class="card-body">
                             <h5 class="card-title m-0">Frutas</h5>
                             </div>
@@ -107,42 +109,42 @@
                 </div>
             </div>
             <div class="col">
-                <div class="p-0 border bg-white">
+                <div class="category-box p-0 bg-white rounded">
                     <div class="row g-0">
                         <div class="col-md-4 d-flex justify-content-center align-items-center">
-                            <i class="bi bi-0-circle"></i>
+                            <img src="/uploads/broccoli.png" class="d-block w-50">
                         </div>
-                        <div class="col-md-8 d-flex justify-content-center align-items-center">
+                        <div class="col-md-8">
                             <div class="card-body">
-                            <h5 class="card-title m-0">Frutas</h5>
+                            <h5 class="card-title m-0">Legumes</h5>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col">
-                <div class="p-0 border bg-white">
+                <div class="category-box p-0 bg-white rounded">
                     <div class="row g-0">
                         <div class="col-md-4 d-flex justify-content-center align-items-center">
-                            <i class="bi bi-0-circle"></i>
+                            <img src="/uploads/cabbage.png" class="d-block w-50">
                         </div>
-                        <div class="col-md-8 d-flex justify-content-center align-items-center">
+                        <div class="col-md-8">
                             <div class="card-body">
-                            <h5 class="card-title m-0">Frutas</h5>
+                            <h5 class="card-title m-0">Verduras</h5>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col">
-                <div class="p-0 border bg-white">
+                <div class="category-box p-0 bg-white rounded">
                     <div class="row g-0">
                         <div class="col-md-4 d-flex justify-content-center align-items-center">
-                            <i class="bi bi-0-circle"></i>
+                            <img src="/uploads/palm-fruit.png" class="d-block w-50">
                         </div>
-                        <div class="col-md-8 d-flex justify-content-center align-items-center">
+                        <div class="col-md-8">
                             <div class="card-body">
-                            <h5 class="card-title m-0">Frutas</h5>
+                            <h5 class="card-title m-0">Grãos</h5>
                             </div>
                         </div>
                     </div>
@@ -161,7 +163,6 @@
                             <img src="<%= product.imagePath %>" class="card-img-top" alt="<%= product.name %>">
                             <div class="card-body">
                                 <h5 class="card-title"><%= product.name %></h5>
-                                <p class="card-text">Descrição: <%= product.description %></p>
                                 <p class="c-orange"><%= product.price %></p>
                             </div>
                         </div>
@@ -211,6 +212,8 @@
             });
         });
 </script>
+
+
 
 </body>
 </html>

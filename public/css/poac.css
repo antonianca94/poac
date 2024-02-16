@@ -193,3 +193,15 @@ input.file-caption-name.form-control.kv-fileinput-caption {
     font-size: 1rem;
     font-weight: 400;
 }
+
+h5.card-title.m-0 {
+    letter-spacing: -0.5px;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #7d7d7d;
+    text-transform: uppercase;
+}
+
+.category-box {
+    border-left: 5px solid #d96900 !important;
+}
