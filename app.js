@@ -7,6 +7,8 @@ const flash = require('express-flash');
 const session = require('express-session');
 
 const multer = require('multer');
+const compression = require('compression');
+
 
 
 function generateRandomCode(length) {
@@ -46,7 +48,9 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use('/public', express.static('public', { maxAge: 3600000 }))
+app.use(compression());
+
+app.use('/public', express.static('public'))
 app.use('/uploads', express.static('uploads'));
 
 
