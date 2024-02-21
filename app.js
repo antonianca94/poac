@@ -164,7 +164,7 @@ app.get('/', async (req, res) => {
 `;
 const products = await executeQuery(productsQuery);
     // Renderiza o arquivo login.ejs
-    res.render('home', { pageTitle: 'Home', message: req.flash('error'), products });
+    res.render('site/home', { pageTitle: 'Home', message: req.flash('error'), products });
 });
 // HOME 
 
@@ -200,15 +200,19 @@ const getRoutesForRole = (roleId) => {
                 '/products',
                 '/products/new',
                 '/products/:id/edit',
+                '/products/:id',
                 '/categories',
                 '/categories/new',
                 '/categories/:id/edit',
+                '/categories/:id',
                 '/roles',
                 '/roles/new',
                 '/roles/:id/edit',
+                '/roles/:id',
                 '/users',
                 '/users/new',
-                '/users/:id/edit'
+                '/users/:id/edit',
+                '/users/:id',
                 // Adicione outras rotas permitidas para o administrador conforme necessário
             ];
         case 6: // Role de usuário normal
@@ -216,7 +220,8 @@ const getRoutesForRole = (roleId) => {
                 '/dashboard',
                 '/products',
                 '/products/new',
-                '/products/:id/edit'
+                '/products/:id/edit',
+                '/products/:id',
                 // Adicione outras rotas permitidas para o usuário normal conforme necessário
             ];
         default:
@@ -255,14 +260,25 @@ app.get('/dashboard', async (req, res) => {
 // PRODUCTS
 app.get('/products', isAuthenticated, async (req, res) => {
     try {
-        const products = await executeQuery('SELECT products.id, products.sku, products.name, products.price,  products.quantity, categories_products.name AS category_name FROM products INNER JOIN categories_products ON products.categories_products_id = categories_products.id');
-        const successMessage = req.flash('success'); 
+        let products;
+        const userId = req.session.passport.user; // Obtém o ID do usuário autenticado
+
+        if (req.user.roles_id === 1) { // Se o usuário for um administrador
+            // Busca todos os produtos
+            products = await executeQuery('SELECT products.id, products.sku, products.name, products.price, products.quantity, categories_products.name AS category_name FROM products INNER JOIN categories_products ON products.categories_products_id = categories_products.id');
+        } else {
+            // Busca apenas os produtos do usuário normal
+            products = await executeQuery('SELECT products.id, products.sku, products.name, products.price, products.quantity, categories_products.name AS category_name FROM products INNER JOIN categories_products ON products.categories_products_id = categories_products.id WHERE products.users_id = ?', [userId]);
+        }
+
+        const successMessage = req.flash('success');
         res.render('products/index', { pageTitle: 'Produtos', products, successMessage, username: req.user.username, userRole: req.user.roles_id });
 
     } catch (error) {
         res.status(500).send('Erro ao buscar produtos');
     }
 });
+
 
 
 app.get('/products/new', isAuthenticated, async (req, res) => {
@@ -733,6 +749,7 @@ app.post('/users', async (req, res) => {
 
 app.delete('/users/:id', isAuthenticated, async (req, res) => {
     const userId = req.params.id;
+    console.log(userId);
     try {
         await executeQuery('DELETE FROM users WHERE id = ?', [userId]);
         res.status(200).json({ message: 'Usuário excluído com sucesso!' });
