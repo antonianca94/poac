@@ -46,7 +46,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-app.use('/public', express.static('public'))
+app.use('/public', express.static('public', { maxAge: 3600000 }))
 app.use('/uploads', express.static('uploads'));
 
 
