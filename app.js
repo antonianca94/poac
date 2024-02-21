@@ -233,8 +233,8 @@ const getRoutesForRole = (roleId) => {
 async function executeQuery(sql, values = []) {
     const connection = await mysql.createConnection({
         host: 'localhost',
-        user: 'root',
-        password: '',
+        user: 'diego',
+        password: '84990999',
         database: 'poac'
     });
 
