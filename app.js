@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const cacheController = require('express-cache-controller');
+
 const PORT = process.env.PORT || 3000;
 
 const mysql = require('mysql2/promise');
@@ -50,6 +52,10 @@ app.use(session({
 
 app.use(compression());
 
+app.use(cacheController({
+    maxAge: '5 minutes' // Tempo de vida do cache em segundos
+  }));
+  
 app.use('/public', express.static('public'))
 app.use('/uploads', express.static('uploads'));
 
