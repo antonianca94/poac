@@ -5,8 +5,7 @@ const RoleController = require('./controllers/RoleController');
 const userController = require('./controllers/UserController'); 
 const CategoriesController = require('./controllers/CategoriesController');
 const productController = require('./controllers/ProductController');
-
-
+const RegisterController = require('./controllers/RegisterController');
 const cacheController = require('express-cache-controller');
 
 const PORT = process.env.PORT || 3000;
@@ -17,9 +16,6 @@ const session = require('express-session');
 
 
 const compression = require('compression');
-
-
-
 
 const multer = require('multer');
 
@@ -128,6 +124,12 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
+
+app.get('/status', (req, res) => {
+    
+});
+
+
 // LOGIN USER
 // Rota de login
 app.post('/login', passport.authenticate('local', {
@@ -144,32 +146,8 @@ app.get('/login', (req, res) => {
 // LOGIN USER
 
 // REGISTRO USER
-// Rota para renderizar o formulário de cadastro de usuário
-app.get('/register', (req, res) => {
-    res.render('register', { message: req.flash('error') });
-});
-
-// Rota para processar o formulário de cadastro de usuário
-app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        // Verifica se o usuário já existe no banco de dados
-        const existingUser = await executeQuery('SELECT * FROM users WHERE username = ?', [username]);
-        if (existingUser.length > 0) {
-            req.flash('error', 'Nome de usuário já existe');
-            return res.redirect('/register');
-        }
-
-        // Insere o novo usuário no banco de dados com roles_id padrão (1)
-        await executeQuery('INSERT INTO users (username, password, roles_id) VALUES (?, ?, 1)', [username, password]);
-        
-        req.flash('success', 'Usuário cadastrado com sucesso!');
-        res.redirect('/login'); // Redireciona para a página de login após o cadastro
-    } catch (error) {
-        console.error('Erro ao cadastrar usuário:', error);
-        res.status(500).send('Erro ao cadastrar usuário');
-    }
-});
+app.get('/register', RegisterController.showRegisterUser);
+app.post('/register', RegisterController.registerUser);
 // REGISTRO USER
 
 // HOME
