@@ -3,20 +3,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registerProductor');
 
     const name = document.getElementById('name');
-    const role = document.getElementById('role');
+    const surname = document.getElementById('surname');
+    const cpf = document.getElementById('cpf');
+    const phone = document.getElementById('phone');
     const username = document.getElementById('username');
+    const email = document.getElementById('email');
     const password = document.getElementById('password');
 
 
     const nameError = document.getElementById('nameError');
-    const roleError = document.getElementById('roleError');
+    const surnameError = document.getElementById('surnameError');
+    const cpfError = document.getElementById('cpfError');
+    const phoneError = document.getElementById('phoneError');
     const usernameError = document.getElementById('usernameError');
+    const emailError = document.getElementById('emailError');
     const passwordError = document.getElementById('passwordError');
 
 
     form.addEventListener('submit', (e) => {
         validateName(e);
-        validateRole(e);
+        validateSurname(e);
         validateUsername(e);
         validatePassword(e);
   
@@ -27,9 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // SELECT2
     $(role).on('change', function(e) {
-        validateRole(e);
-    });
-    $(role).on('select2:open', function(e) {
         validateRole(e);
     });
     // SELECT2
@@ -55,16 +58,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function validateRole(e){
-        const role_select = document.querySelector('.select2-container--default .select2-selection--single');
-        if (role.value === '' || role.value == null) {
-            role_select.style.border = "1px solid #dc3545"; // Adiciona uma borda vermelha
-            roleError.classList.add("d-block");
-            roleError.innerText = 'Insira algo na role';
+    function validateSurname(e){
+        if (surname.value === '' || surname.value == null) {
+            surname.classList.add("is-invalid");
+            surnameError.classList.add("d-block");
+            surnameError.innerText = 'Insira algo no sobrenome';
             e.preventDefault();
         } else {
-            role_select.style.border = "1px solid #198754"; // Adiciona uma borda vermelha
-            roleError.classList.remove("d-block");
+            surname.classList.remove("is-invalid");
+            surname.classList.add("is-valid");
+            surnameError.classList.remove("d-block");
         }
     }
 
