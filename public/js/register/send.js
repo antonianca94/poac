@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', (e) => {
         validateName(e);
         validateSurname(e);
+        validateCpf(e);
+        validatePhone(e);
         validateUsername(e);
         validatePassword(e);
   
@@ -30,12 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     name.addEventListener('input', validateName);
     name.addEventListener('focus', validateName);
-
-    // SELECT2
-    $(role).on('change', function(e) {
-        validateRole(e);
-    });
-    // SELECT2
+    surname.addEventListener('input', validateSurname);
+    surname.addEventListener('focus', validateSurname);
+    cpf.addEventListener('input', validateCpf);
+    cpf.addEventListener('focus', validateCpf);
+    phone.addEventListener('input', validatePhone);
+    phone.addEventListener('focus', validatePhone);
     
     username.addEventListener('input', validateUsername);
     username.addEventListener('focus', validateUsername);
@@ -68,6 +70,32 @@ document.addEventListener('DOMContentLoaded', function() {
             surname.classList.remove("is-invalid");
             surname.classList.add("is-valid");
             surnameError.classList.remove("d-block");
+        }
+    }
+
+    function validateCpf(e){
+        if (cpf.value === '' || cpf.value == null) {
+            cpf.classList.add("is-invalid");
+            cpfError.classList.add("d-block");
+            cpfError.innerText = 'Insira algo no CPF';
+            e.preventDefault();
+        } else {
+            cpf.classList.remove("is-invalid");
+            cpf.classList.add("is-valid");
+            cpfError.classList.remove("d-block");
+        }
+    }
+
+    function validatePhone(e){
+        if (phone.value === '' || phone.value == null) {
+            phone.classList.add("is-invalid");
+            phoneError.classList.add("d-block");
+            phoneError.innerText = 'Insira algo no Telefone';
+            e.preventDefault();
+        } else {
+            phone.classList.remove("is-invalid");
+            phone.classList.add("is-valid");
+            phoneError.classList.remove("d-block");
         }
     }
 
