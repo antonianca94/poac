@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         username: { element: document.getElementById('username'), error: document.getElementById('usernameError'), message: 'Insira algo no usuário' },
         email: { element: document.getElementById('email'), error: document.getElementById('emailError'), message: 'Insira algo no e-mail' },
         password: { element: document.getElementById('password'), error: document.getElementById('passwordError'), message: 'Insira algo na senha' },
+        password2: { element: document.getElementById('password2'), error: document.getElementById('password2Error'), message: 'Insira algo no Repetir senha' },
         cnpj: { element: document.getElementById('cnpj'), error: document.getElementById('cnpjError'), message: 'Insira algo no CNPJ' },
         company_name: { element: document.getElementById('company_name'), error: document.getElementById('company_nameError'), message: 'Insira algo no Nome da Empresa' },
         cep: { element: document.getElementById('cep'), error: document.getElementById('cepError'), message: 'Insira algo no CEP' },
@@ -27,6 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 allFieldsValid = false; // Se um campo estiver vazio, definir como false
             }
         });
+
+        if (fields.password.element.value !== fields.password2.element.value) {
+            fields.password2.element.classList.add("is-invalid");
+            fields.password2.error.classList.add("d-block");
+            fields.password2.error.innerText = "As senhas não coincidem";
+            allFieldsValid = false;
+        }
 
         if (allFieldsValid) {
             // Se todos os campos forem válidos, você pode prosseguir com o envio do formulário

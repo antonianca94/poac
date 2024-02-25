@@ -25,7 +25,7 @@ const registerUser = async (req, res) => {
         // Verifica se o usuário já existe no banco de dados
         const existingUser = await executeQuery('SELECT * FROM users WHERE username = ?', [username]);
         if (existingUser.length > 0) {
-            req.flash('error', 'Nome de usuário já existe');
+            req.flash('error', ' Nome de usuário já existe ');
             // return res.redirect('/register');
         }
 
@@ -41,8 +41,8 @@ const registerUser = async (req, res) => {
         res.render('register', { message: 'Dados enviados com sucesso!' });
 
     } catch (error) {
-        console.error('Erro ao inserir o produtor ou usuário:', error);
-        req.flash('error', 'Erro ao cadastrar usuário');
+        console.error('Erro ao inserir o produtor ou usuário: ', error);
+        req.flash('error', ' Erro ao cadastrar usuário ');
         res.redirect('/register');
     }
 };
