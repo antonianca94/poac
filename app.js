@@ -6,6 +6,8 @@ const userController = require('./controllers/UserController');
 const CategoriesController = require('./controllers/CategoriesController');
 const productController = require('./controllers/ProductController');
 const RegisterController = require('./controllers/RegisterController');
+const VendorsController = require('./controllers/VendorsController');
+
 const cacheController = require('express-cache-controller');
 
 const PORT = process.env.PORT || 3000;
@@ -209,6 +211,7 @@ const getRoutesForRole = (roleId) => {
                 '/users/new',
                 '/users/:id/edit',
                 '/users/:id',
+                '/vendors'
                 // Adicione outras rotas permitidas para o administrador conforme necessário
             ];
         case 6: // Role de usuário normal
@@ -271,7 +274,11 @@ app.delete('/categories/:id', isAuthenticated, CategoriesController.deleteCatego
 app.get('/categories/:id/edit', isAuthenticated, CategoriesController.showEditCategoryForm);
 app.post('/categories/:id', isAuthenticated, CategoriesController.updateCategory);
 // CATEGORIES
+// VENDORS
+app.get('/vendors', isAuthenticated, VendorsController.getAllVendors);
+app.delete('/vendors/:id', VendorsController.deleteVendor);
 
+// VENDORS
 app.get('/dashboard', async (req, res) => {
     res.render('dashboard/index', { pageTitle: 'Painel',username: req.user.username, userRole: req.user.roles_id });
 
