@@ -211,7 +211,8 @@ const getRoutesForRole = (roleId) => {
                 '/users/new',
                 '/users/:id/edit',
                 '/users/:id',
-                '/vendors'
+                '/vendors',
+                '/vendors/:id/edit',
                 // Adicione outras rotas permitidas para o administrador conforme necessário
             ];
         case 6: // Role de usuário normal
@@ -277,6 +278,8 @@ app.post('/categories/:id', isAuthenticated, CategoriesController.updateCategory
 // VENDORS
 app.get('/vendors', isAuthenticated, VendorsController.getAllVendors);
 app.delete('/vendors/:id', VendorsController.deleteVendor);
+app.get('/vendors/:id/edit', isAuthenticated, VendorsController.showEditVendorForm);
+
 
 // VENDORS
 app.get('/dashboard', async (req, res) => {

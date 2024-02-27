@@ -30,13 +30,13 @@ const registerUser = async (req, res) => {
         }
 
         // Insere o usuário na tabela users
-        const result = await executeQuery('INSERT INTO users (username, password, name, surname, roles_id) VALUES (?, ?, ?, ?, 1)', [username, password, name, surname]);
+        const result = await executeQuery('INSERT INTO users (username, password, name, surname, roles_id, cpf) VALUES (?, ?, ?, ?, 1, ?)', [username, password, name, surname, cpf]);
 
         // Obtém o ID do usuário inserido
         const userId = result.insertId;
 
         // Insere o produtor na tabela vendors
-        await executeQuery('INSERT INTO vendors (name, description, address, city, state, country, phone, email, users_id, cep, cnpj) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [company_name, '', street, city, state, country, phone, email, userId, cep, cnpj]);
+        await executeQuery('INSERT INTO vendors (name, description, address, city, state, country, phone, email, users_id, cep, cnpj, neighborhood) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [company_name, '', street, city, state, country, phone, email, userId, cep, cnpj, neighborhood]);
         
         res.render('register', { message: 'Dados enviados com sucesso!' });
 

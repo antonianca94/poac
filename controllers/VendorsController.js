@@ -23,7 +23,19 @@ const deleteVendor = async (req, res) => {
     }
 };
 
+const showEditVendorForm = async (req, res) => {
+    const Id = req.params.id;
+    try {
+        const [vendor] = await executeQuery('SELECT * FROM vendors WHERE id = ?', [Id]);
+        const [user] = await executeQuery('SELECT * FROM users WHERE id = ?', [vendor.users_id]);
+        res.render('vendors/edit', { pageTitle: 'Editar Produtor', vendor, user, errors: '', username: req.user.username, userRole: req.user.roles_id  });
+    } catch (error) {
+        res.status(500).send('Erro ao buscar produtor para edição');
+    }
+};
+
 module.exports = {
     getAllVendors,
-    deleteVendor
+    deleteVendor,
+    showEditVendorForm
 };
