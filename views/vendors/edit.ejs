@@ -82,6 +82,13 @@
                 </div>
                 <form action="/vendors/<%= vendor.id %>" method="post" id="updateProductor">
                     <div class="row">
+                        <div class="col" style="display: none;">
+                            <div class="form-group">
+                                <label for="name" class="form-label">User ID</label>
+                                    <input type="text" value="<%= user.id %>" class="form-control" id="users_id" name="users_id">
+                                    <div class="invalid-feedback" id="nameError"></div>
+                            </div>
+                        </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="name" class="form-label">Nome</label>

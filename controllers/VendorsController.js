@@ -11,7 +11,6 @@ const getAllVendors = async (req, res) => {
     }
 };
 
-// Função para excluir uma categoria
 const deleteVendor = async (req, res) => {
     const vendorId = req.params.id;
     try {
@@ -34,8 +33,23 @@ const showEditVendorForm = async (req, res) => {
     }
 };
 
+const updateVendor = async (req, res) => {
+    const { name, username, surname, cpf, password, company_name, description, street, neighborhood, city, state, country, phone, email, cep, cnpj } = req.body;
+    try {
+        let users_id = parseInt(req.body.users_id);
+        await executeQuery('UPDATE users SET username = ?, password = ?, name = ?, surname = ?, cpf = ? WHERE id = ?', [username, password, name, surname, cpf, users_id]);   
+        await executeQuery('UPDATE vendors SET name = ?, description = ?, address = ?, neighborhood = ?, city = ?, state = ?, country = ?, phone = ?, email = ?, cep = ?, users_id = ?, cnpj = ? WHERE id = ?', [company_name, '', street, neighborhood, city, state, country, phone, email, cep, users_id, cnpj, req.params.id]);
+        req.flash('success', 'Produtor atualizado com sucesso!');
+        res.redirect('/vendors');
+    } catch (error) {
+        console.log(error)
+        res.status(500).send('Erro ao atualizar o Produtor');
+    }
+};
+
 module.exports = {
     getAllVendors,
     deleteVendor,
-    showEditVendorForm
+    showEditVendorForm,
+    updateVendor
 };
