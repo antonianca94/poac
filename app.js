@@ -213,6 +213,7 @@ const getRoutesForRole = (roleId) => {
                 '/users/:id',
                 '/vendors',
                 '/vendors/:id/edit',
+                '/vendors/:id'
                 // Adicione outras rotas permitidas para o administrador conforme necessário
             ];
         case 6: // Role de usuário normal
@@ -279,6 +280,7 @@ app.post('/categories/:id', isAuthenticated, CategoriesController.updateCategory
 app.get('/vendors', isAuthenticated, VendorsController.getAllVendors);
 app.delete('/vendors/:id', VendorsController.deleteVendor);
 app.get('/vendors/:id/edit', isAuthenticated, VendorsController.showEditVendorForm);
+app.post('/vendors/:id', isAuthenticated, VendorsController.updateVendor);
 
 
 // VENDORS

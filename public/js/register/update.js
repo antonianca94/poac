@@ -17,12 +17,14 @@ document.addEventListener('DOMContentLoaded', function() {
         city: { element: document.getElementById('city'), error: document.getElementById('cityError'), message: 'Insira algo na Cidade' },
         state: { element: document.getElementById('state'), error: document.getElementById('stateError'), message: 'Insira algo no Estado' },
     };
+    
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         let allFieldsValid = true; // Variável para verificar se todos os campos são válidos
         Object.values(fields).forEach(field => {
             validateField(field); // Validar cada campo
+            console.log(field.element.value);
             if (field.element.value.trim() === '') {
                 allFieldsValid = false; // Se um campo estiver vazio, definir como false
             }
