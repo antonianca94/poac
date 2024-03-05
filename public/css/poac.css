@@ -205,3 +205,47 @@ h5.card-title.m-0 {
 .category-box {
     border-left: 5px solid #d96900 !important;
 }
+
+.product-image-nav .slick-track img {
+    height: 100px; 
+    width: auto; 
+    object-fit: cover; 
+}
+
+.product-image-for .slick-track img {
+    height: 22rem; 
+    width: auto; 
+    object-fit: cover; 
+}
+p.product-sku {
+    font-size: 0.85rem !important;
+    color: lightslategrey;
+    letter-spacing: 0.6px;
+    margin-bottom: 1rem;
+}
+.slick-carousel.last-products img {
+    height: 12rem;
+    width: 100%;
+    object-fit: fill;
+}
+.product_index button.slick-prev.slick-arrow {
+    z-index: 1;
+}
+
+.product-image-for.slick-initialized.slick-slider {
+    padding: 1rem;
+}
+
+.product-image-nav.slick-initialized.slick-slider.slick-dotted {
+    padding: 1rem;
+}
+.nav-tabs .nav-link i {
+    color: #d96900;
+    margin-right: 0.4rem;
+    font-size: 1.14rem;
+} 
+.nav-tabs .nav-link {
+    color: #999999;
+    font-weight: 500;
+    letter-spacing: -0.4px;
+}
