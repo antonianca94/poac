@@ -299,6 +299,9 @@ app.post('/uploads/:filename', productController.deleteImage);
 app.post('/products/:id', upload.any(), productController.updateProduct);
 // PRODUCTS
 
+// PRODUTO
+app.get('/produto/:sku', productController.getProductBySKU);
+// PRODUTO
 
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);

@@ -107,9 +107,6 @@ const showNewProductForm = async (req, res) => {
     }
 };
 
-
-
-
 const deleteProduct = async (req, res) => {
     const productId = req.params.id;
     try {
@@ -270,6 +267,34 @@ const updateProduct = async (req, res) => {
     }
 };
 
+const getProductBySKU = async (req, res) => {
+    const sku = req.params.sku; // Obter o SKU da URL
+
+    try {
+        // Consulta para obter as informações do produto pelo SKU
+        const product = await executeQuery('SELECT * FROM products WHERE sku = ?', [sku]);
+
+        // Verificar se o produto foi encontrado
+        if (product.length === 0) {
+            return res.status(404).send('Produto não encontrado');
+        }
+
+        // Consulta para obter todas as imagens relacionadas ao produto
+        const images = await executeQuery('SELECT * FROM images WHERE products_id = ?', [product[0].id]);
+        const vendor = await executeQuery('SELECT * FROM vendors WHERE users_id = ?', [product[0].users_id]);
+        res.render('site/product/index', { 
+            pageTitle: 'Produto', 
+            product,
+            images,
+            vendor
+        });
+    } catch (error) {
+        console.error('Erro ao buscar produto por SKU:', error);
+        res.status(500).send('Erro ao buscar produto por SKU');
+    }
+};
+
+
 // Exportando as funções do controller para serem usadas em outros lugares
 module.exports = {
     getAllProducts,
@@ -278,5 +303,6 @@ module.exports = {
     deleteProduct,
     showEditProductForm,
     deleteImage,
-    updateProduct
+    updateProduct,
+    getProductBySKU 
 };
