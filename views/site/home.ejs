@@ -154,11 +154,13 @@
                 <% products.forEach(product => { %>
                     <div>
                         <div class="listing-products m-2">
-                            <img src="<%= product.imagePath %>" class="card-img-top" alt="<%= product.name %>">
+                            <a href="/produto/<%= product.sku %>">
+                                <img src="<%= product.imagePath %>" class="card-img-top" alt="<%= product.name %>">
+                            </a>
                             <div class="card-body">
                                 <a href="/produto/<%= product.sku %>"> <h5 class="card-title"><%= product.name %></h5> </a>
                                 
-                                <p class="c-orange"><%= product.price %></p>
+                                <p class="c-orange">R$ <%= product.price %></p>
                             </div>
                         </div>
                     </div>

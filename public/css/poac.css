@@ -224,9 +224,10 @@ p.product-sku {
     margin-bottom: 1rem;
 }
 .slick-carousel.last-products img {
-    height: 12rem;
+    height: 10rem;
     width: 100%;
-    object-fit: fill;
+    object-fit: cover;
+    border-radius: 7px;
 }
 .product_index button.slick-prev.slick-arrow {
     z-index: 1;
@@ -276,4 +277,20 @@ p.product-sku {
 }
 .slick-track img:not(:last-child) {
     margin-right: 10px; 
+}
+
+
+
+.listing-products a {
+    color: #949494;
+    text-decoration: none !important;
+}
+.listing-products p {
+    text-decoration: none !important;
+    font-size: 1.12rem !important;
+}
+
+.card-body {
+    padding-left: 2px;
+    padding-right: 0;
 }
