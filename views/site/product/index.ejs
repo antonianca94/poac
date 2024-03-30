@@ -16,40 +16,8 @@
 
 </head>
 <body class="product_index">
-    <nav class="navbar navbar-expand-lg navbar-light b-orange">
-        <div class="container">
-            <a href="/" class="navbar-brand" style="color: white !important;">
-                <!-- <img src="images/logo.svg" height="28" alt="CoolBrand"> -->
-                POAC
-            </a>
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <div class="navbar-nav">
-                    <a href="#" class="nav-item nav-link active text-light">Home</a>
-                    <a href="#" class="nav-item nav-link text-light">Produtos</a>
-                    <a href="#" class="nav-item nav-link text-light">Sobre</a>
-                    <!-- <a href="#" class="nav-item nav-link disabled" tabindex="-1">Reports</a> -->
-                </div>
-                <div class="col-6 ms-auto">
-                    <form class="d-flex">
-                        <div class="input-group">                    
-                            <input type="text" class="form-control" placeholder="Pesquisar">
-                            <button type="button" class="btn btn-secondary"><i class="bi-search"></i></button>
-                        </div>
-                    </form>
-                </div>
-                <div class="navbar-nav ms-auto">
-                    <a href="/register" class="nav-item nav-link text-light">Registro</a>
-                    <a href="/login" class="nav-item nav-link text-light">Login</a>
-                </div>
-            </div>
-            
-        </div>
-        
-    </nav>
-    
+
+    <%- include('../header') %>
     
     <div class="container mt-5 px-0 bg-white rounded">
         <div class="row gx-5">
@@ -174,6 +142,8 @@
 
 
     </script>
+
+<%- include('../footer') %>
 
 </body>
 </html>

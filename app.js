@@ -284,7 +284,7 @@ app.post('/vendors/:id', isAuthenticated, VendorsController.updateVendor);
 
 
 // VENDORS
-app.get('/dashboard', async (req, res) => {
+app.get('/dashboard', isAuthenticated, async (req, res) => {
     res.render('dashboard/index', { pageTitle: 'Painel',username: req.user.username, userRole: req.user.roles_id });
 
 });
