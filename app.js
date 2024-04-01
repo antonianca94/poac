@@ -7,6 +7,7 @@ const CategoriesController = require('./controllers/CategoriesController');
 const productController = require('./controllers/ProductController');
 const RegisterController = require('./controllers/RegisterController');
 const VendorsController = require('./controllers/VendorsController');
+const CartController = require('./controllers/CartController');
 
 const cacheController = require('express-cache-controller');
 
@@ -307,7 +308,6 @@ app.get('/produto/:sku', productController.getProductBySKU);
 const isAuthenticatedUserRole = (requiredRoleId) => (req, res, next) => {
     if (req.isAuthenticated()) {
         const userRole = req.user.roles_id;
-        // console.log(userRole);
         // Verifica se o usuário tem o role_id necessário
         if (userRole === requiredRoleId) {
             return next(); // Prossiga para a próxima rota se o usuário tiver o role_id necessário
@@ -320,11 +320,13 @@ const isAuthenticatedUserRole = (requiredRoleId) => (req, res, next) => {
 // VERIFICAÇÃO USUÁRIO NORMAL
 
 // CARRINHO DE COMPRAS
-app.post('/adicionar-ao-carrinho', isAuthenticatedUserRole(3), (req, res) => {
-    // Se chegarmos aqui, o usuário está autenticado e tem o role_id == 3
-    const formData = req.body;
-    // Aqui você pode processar os dados do formulário e adicionar o item ao carrinho
-    res.send({ message: 'Item adicionado ao carrinho com sucesso!' });
+app.post('/adicionar-ao-carrinho', isAuthenticatedUserRole(3), async (req, res) => {
+    try {
+        await CartController.addToCart(req, res); // Chamar a função addToCart do controlador
+    } catch (error) {
+        console.error('Erro ao adicionar item ao carrinho:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
 });
 // CARRINHO DE COMPRAS
 
