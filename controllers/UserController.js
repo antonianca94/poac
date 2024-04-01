@@ -20,7 +20,7 @@ const showNewUserForm = async (req, res) => {
 
 // Função para criar um novo usuário
 const createUser = async (req, res) => {
-    const { name, username, role, password } = req.body;
+    const { name, surname, cpf, username, role, password } = req.body;
     const userId = req.session.passport.user; 
 
     if (!userId) {
@@ -28,7 +28,7 @@ const createUser = async (req, res) => {
     }
 
     try {
-        await executeQuery('INSERT INTO users (name, username, roles_id, password) VALUES (?, ?, ?, ?)', [name, username, role, password]);
+        await executeQuery('INSERT INTO users (name, surname, cpf, username, roles_id, password) VALUES (?, ?, ?, ?, ?, ?)', [name, surname, cpf, username, role, password]);
         req.flash('success', 'Usuário cadastrado com sucesso!');
         res.redirect('/users');
     } catch (error) {

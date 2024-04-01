@@ -118,7 +118,6 @@
 
             $('#addToCartButton').click(function() {
                 var formData = $('#addToCartForm').serialize();
-                console.log(formData);
                 $.ajax({
                     type: 'POST',
                     url: '/adicionar-ao-carrinho',
@@ -130,6 +129,7 @@
                     error: function(xhr, status, error) {
                         // Se ocorrer algum erro ao enviar a solicitação AJAX
                         console.error(error);
+                        
                     }
                 });
             });

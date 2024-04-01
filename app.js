@@ -216,7 +216,7 @@ const getRoutesForRole = (roleId) => {
                 '/vendors/:id'
                 // Adicione outras rotas permitidas para o administrador conforme necessário
             ];
-        case 6: // Role de usuário normal
+        case 2: // Role de usuário normal
             return [
                 '/dashboard',
                 '/products',
@@ -302,6 +302,31 @@ app.post('/products/:id', upload.any(), productController.updateProduct);
 // PRODUTO
 app.get('/produto/:sku', productController.getProductBySKU);
 // PRODUTO
+
+// VERIFICAÇÃO USUÁRIO NORMAL
+const isAuthenticatedUserRole = (requiredRoleId) => (req, res, next) => {
+    if (req.isAuthenticated()) {
+        const userRole = req.user.roles_id;
+        // console.log(userRole);
+        // Verifica se o usuário tem o role_id necessário
+        if (userRole === requiredRoleId) {
+            return next(); // Prossiga para a próxima rota se o usuário tiver o role_id necessário
+        } else {
+            return res.status(403).send('Acesso proibido'); // Retorne uma resposta 403 (Acesso Proibido)
+        }
+    }
+    res.status(401).send('Não autenticado'); // Retorne uma resposta 401 (Não Autorizado)
+};
+// VERIFICAÇÃO USUÁRIO NORMAL
+
+// CARRINHO DE COMPRAS
+app.post('/adicionar-ao-carrinho', isAuthenticatedUserRole(3), (req, res) => {
+    // Se chegarmos aqui, o usuário está autenticado e tem o role_id == 3
+    const formData = req.body;
+    // Aqui você pode processar os dados do formulário e adicionar o item ao carrinho
+    res.send({ message: 'Item adicionado ao carrinho com sucesso!' });
+});
+// CARRINHO DE COMPRAS
 
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);
