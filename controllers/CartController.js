@@ -1,7 +1,7 @@
 const { executeQuery } = require('../db');
 
 const generateRandomCode = () => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let code = '';
     for (let i = 0; i < 9; i++) {
         code += characters.charAt(Math.floor(Math.random() * characters.length));
