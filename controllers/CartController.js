@@ -1,5 +1,14 @@
 const { executeQuery } = require('../db');
 
+const generateRandomCode = () => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 9; i++) {
+        code += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return code;
+};
+
 // Adicionar um item ao carrinho
 const addToCart = async (req, res) => {
     try {
@@ -21,9 +30,11 @@ const addToCart = async (req, res) => {
         let shoppingCart = await executeQuery('SELECT * FROM shopping_cart WHERE users_id = ?', [userId]);
         
         if (shoppingCart.length === 0) {
+            const cartCode = generateRandomCode();
+
             // Se o usuário não tiver um carrinho, crie um novo
-            const result = await executeQuery('INSERT INTO shopping_cart (code, created_at, users_id) VALUES (?, NOW(), ?)', ['CARRINHO', userId]);
-            shoppingCart = [{ id: result.insertId }];
+            const result = await executeQuery('INSERT INTO shopping_cart (code, created_at, users_id) VALUES (?, NOW(), ?)', [cartCode, userId]);
+            shoppingCart = [{ id: result.insertId, code: cartCode }];
         }
 
         // Verificar se o produto já está no carrinho
@@ -62,28 +73,25 @@ const removeFromCart = async (req, res) => {
     }
 };
 
-// Exibir o carrinho de compras
-const viewCart = async (req, res) => {
+const getCartByCode = async (req, res) => {
     try {
-        const userId = req.session.passport.user;
+        const cartCode = req.params.code;
 
-        // Obter os itens do carrinho do usuário
-        const cartItems = await executeQuery('SELECT * FROM cart_items WHERE shopping_cart_id = ?', [userId]);
+        // Buscar o carrinho no banco de dados usando o código fornecido
+        const cart = await executeQuery('SELECT * FROM shopping_cart WHERE code = ?', [cartCode]);
 
-        // Recuperar detalhes dos produtos no carrinho
-        const cartProducts = [];
-        for (const item of cartItems) {
-            const product = await executeQuery('SELECT * FROM products WHERE id = ?', [item.products_id]);
-            cartProducts.push({
-                id: item.id,
-                product: product[0],
-                quantity: item.quantity
-            });
+        // Verificar se o carrinho foi encontrado
+        if (cart.length === 0) {
+            return res.status(404).send('Carrinho não encontrado');
         }
 
-        res.render('cart', { pageTitle: 'Carrinho de Compras', cartProducts });
+        // Buscar os itens do carrinho
+        const cartItems = await executeQuery('SELECT * FROM cart_items WHERE shopping_cart_id = ?', [cart[0].id]);
+
+        // Retorna o carrinho e seus itens como resposta
+        res.status(200).json({ cart, cartItems });
     } catch (error) {
-        console.error('Erro ao exibir carrinho de compras:', error);
+        console.error('Erro ao buscar carrinho:', error);
         res.status(500).send('Erro interno do servidor');
     }
 };
@@ -91,5 +99,5 @@ const viewCart = async (req, res) => {
 module.exports = {
     addToCart,
     removeFromCart,
-    viewCart
+    getCartByCode
 };

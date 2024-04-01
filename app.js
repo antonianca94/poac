@@ -330,6 +330,10 @@ app.post('/adicionar-ao-carrinho', isAuthenticatedUserRole(3), async (req, res) 
 });
 // CARRINHO DE COMPRAS
 
+// CARRINHO
+app.get('/carrinho/:code', CartController.getCartByCode);
+// CARRINHO
+
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);
 });
