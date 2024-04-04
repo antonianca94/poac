@@ -269,6 +269,7 @@ const updateProduct = async (req, res) => {
 
 const getProductBySKU = async (req, res) => {
     const sku = req.params.sku; // Obter o SKU da URL
+    const user = req.user; // Obter o usuário autenticado, se estiver disponível
 
     try {
         // Consulta para obter as informações do produto pelo SKU
@@ -286,7 +287,8 @@ const getProductBySKU = async (req, res) => {
             pageTitle: 'Produto', 
             product,
             images,
-            vendor
+            vendor,
+            user
         });
     } catch (error) {
         console.error('Erro ao buscar produto por SKU:', error);

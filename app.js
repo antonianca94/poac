@@ -7,6 +7,7 @@ const CategoriesController = require('./controllers/CategoriesController');
 const productController = require('./controllers/ProductController');
 const RegisterController = require('./controllers/RegisterController');
 const VendorsController = require('./controllers/VendorsController');
+const CartController = require('./controllers/CartController');
 
 const cacheController = require('express-cache-controller');
 
@@ -134,8 +135,9 @@ app.get('/status', (req, res) => {
 
 // LOGIN USER
 // Rota de login
+// Se o login for bem-sucedido, redirecionar o usuário para a URL armazenada na consulta "redirect"
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/dashboard',
+    successRedirect: '/',
     failureRedirect: '/login',
     failureFlash: true
 }));
@@ -155,6 +157,8 @@ app.post('/register', RegisterController.registerUser);
 // HOME
 app.get('/', async (req, res) => {
 
+    const user = req.user; // Obter o usuário autenticado, se estiver disponível
+
     const productsQuery = `
     SELECT p.*, i.path AS imagePath
     FROM products p
@@ -163,7 +167,7 @@ app.get('/', async (req, res) => {
 `;
 const products = await executeQuery(productsQuery);
     // Renderiza o arquivo login.ejs
-    res.render('site/home', { pageTitle: 'Home', message: req.flash('error'), products });
+    res.render('site/home', { pageTitle: 'Home', message: req.flash('error'), products, user });
 });
 // HOME 
 
@@ -216,7 +220,7 @@ const getRoutesForRole = (roleId) => {
                 '/vendors/:id'
                 // Adicione outras rotas permitidas para o administrador conforme necessário
             ];
-        case 6: // Role de usuário normal
+        case 2: // Role de usuário normal
             return [
                 '/dashboard',
                 '/products',
@@ -225,8 +229,10 @@ const getRoutesForRole = (roleId) => {
                 '/products/:id',
                 // Adicione outras rotas permitidas para o usuário normal conforme necessário
             ];
-        default:
-            return [];
+        default: 
+            return [
+                '/dashboard'
+            ];
     }
 };
 
@@ -302,6 +308,22 @@ app.post('/products/:id', upload.any(), productController.updateProduct);
 // PRODUTO
 app.get('/produto/:sku', productController.getProductBySKU);
 // PRODUTO
+
+// Middleware para verificar se o usuário está autenticado e tem o role_id necessário
+
+// Rota para adicionar ao carrinho de compras
+app.post('/adicionar-ao-carrinho', async (req, res, next) => {
+    try {
+        await CartController.addToCart(req, res); // Chamar a função addToCart do controlador
+    } catch (error) {
+        console.error('Erro ao adicionar item ao carrinho:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+});
+
+// CARRINHO
+app.get('/carrinho/:code', CartController.getCartByCode);
+// CARRINHO
 
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);
