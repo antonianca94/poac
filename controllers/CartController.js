@@ -74,6 +74,9 @@ const removeFromCart = async (req, res) => {
 };
 
 const getCartByCode = async (req, res) => {
+
+
+    const user = req.user; // Obter o usuário autenticado, se estiver disponível
     try {
         const cartCode = req.params.code;
 
@@ -88,8 +91,22 @@ const getCartByCode = async (req, res) => {
         // Buscar os itens do carrinho
         const cartItems = await executeQuery('SELECT * FROM cart_items WHERE shopping_cart_id = ?', [cart[0].id]);
 
-        // Retorna o carrinho e seus itens como resposta
-        res.status(200).json({ cart, cartItems });
+        // Para cada item no carrinho, obter os detalhes do produto associado
+        for (const item of cartItems) {
+            // Consulta SQL para obter os detalhes do produto
+            const productQuery = 'SELECT name, price FROM products WHERE id = ?';
+            const product = await executeQuery(productQuery, [item.products_id]);
+            item.productName = product.length > 0 ? product[0].name : 'Produto não encontrado'; // Adiciona o nome do produto ao item do carrinho
+            item.productPrice = product.length > 0 ? product[0].price : 0; // Adiciona o preço do produto ao item do carrinho
+        }
+
+        res.render('site/cart/index', { 
+            pageTitle: 'Carrinho', 
+            cart: cart[0], // Passa o carrinho como contexto para o template
+            cartItems: cartItems,
+            user
+        });
+
     } catch (error) {
         console.error('Erro ao buscar carrinho:', error);
         res.status(500).send('Erro interno do servidor');

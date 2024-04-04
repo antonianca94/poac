@@ -135,8 +135,9 @@ app.get('/status', (req, res) => {
 
 // LOGIN USER
 // Rota de login
+// Se o login for bem-sucedido, redirecionar o usuário para a URL armazenada na consulta "redirect"
 app.post('/login', passport.authenticate('local', {
-    successRedirect: '/dashboard',
+    successRedirect: '/',
     failureRedirect: '/login',
     failureFlash: true
 }));
@@ -156,6 +157,8 @@ app.post('/register', RegisterController.registerUser);
 // HOME
 app.get('/', async (req, res) => {
 
+    const user = req.user; // Obter o usuário autenticado, se estiver disponível
+
     const productsQuery = `
     SELECT p.*, i.path AS imagePath
     FROM products p
@@ -164,7 +167,7 @@ app.get('/', async (req, res) => {
 `;
 const products = await executeQuery(productsQuery);
     // Renderiza o arquivo login.ejs
-    res.render('site/home', { pageTitle: 'Home', message: req.flash('error'), products });
+    res.render('site/home', { pageTitle: 'Home', message: req.flash('error'), products, user });
 });
 // HOME 
 
@@ -226,8 +229,10 @@ const getRoutesForRole = (roleId) => {
                 '/products/:id',
                 // Adicione outras rotas permitidas para o usuário normal conforme necessário
             ];
-        default:
-            return [];
+        default: 
+            return [
+                '/dashboard'
+            ];
     }
 };
 
@@ -304,23 +309,10 @@ app.post('/products/:id', upload.any(), productController.updateProduct);
 app.get('/produto/:sku', productController.getProductBySKU);
 // PRODUTO
 
-// VERIFICAÇÃO USUÁRIO NORMAL
-const isAuthenticatedUserRole = (requiredRoleId) => (req, res, next) => {
-    if (req.isAuthenticated()) {
-        const userRole = req.user.roles_id;
-        // Verifica se o usuário tem o role_id necessário
-        if (userRole === requiredRoleId) {
-            return next(); // Prossiga para a próxima rota se o usuário tiver o role_id necessário
-        } else {
-            return res.status(403).send('Acesso proibido'); // Retorne uma resposta 403 (Acesso Proibido)
-        }
-    }
-    res.status(401).send('Não autenticado'); // Retorne uma resposta 401 (Não Autorizado)
-};
-// VERIFICAÇÃO USUÁRIO NORMAL
+// Middleware para verificar se o usuário está autenticado e tem o role_id necessário
 
-// CARRINHO DE COMPRAS
-app.post('/adicionar-ao-carrinho', isAuthenticatedUserRole(3), async (req, res) => {
+// Rota para adicionar ao carrinho de compras
+app.post('/adicionar-ao-carrinho', async (req, res, next) => {
     try {
         await CartController.addToCart(req, res); // Chamar a função addToCart do controlador
     } catch (error) {
@@ -328,7 +320,6 @@ app.post('/adicionar-ao-carrinho', isAuthenticatedUserRole(3), async (req, res) 
         res.status(500).send('Erro interno do servidor');
     }
 });
-// CARRINHO DE COMPRAS
 
 // CARRINHO
 app.get('/carrinho/:code', CartController.getCartByCode);
