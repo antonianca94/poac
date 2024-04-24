@@ -322,7 +322,7 @@ app.post('/adicionar-ao-carrinho', async (req, res, next) => {
 });
 
 // CARRINHO
-app.get('/carrinho/:code', CartController.getCartByCode);
+app.get('/carrinho', CartController.getCart);
 // CARRINHO
 
 app.listen(PORT, () => {
