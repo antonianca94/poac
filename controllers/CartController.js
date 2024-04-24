@@ -73,24 +73,44 @@ const removeFromCart = async (req, res) => {
     }
 };
 
-const getCartByCode = async (req, res) => {
+const getCart = async (req, res) => {
 
 
     const user = req.user; // Obter o usuário autenticado, se estiver disponível
     try {
         const cartCode = req.params.code;
+        const userId = req.user.id;
 
         // Buscar o carrinho no banco de dados usando o código fornecido
-        const cart = await executeQuery('SELECT * FROM shopping_cart WHERE code = ?', [cartCode]);
+        const cart = await executeQuery('SELECT * FROM shopping_cart WHERE users_id = ?', [userId]);
 
         // Verificar se o carrinho foi encontrado
         if (cart.length === 0) {
             return res.status(404).send('Carrinho não encontrado');
         }
 
-        // Buscar os itens do carrinho
-        const cartItems = await executeQuery('SELECT * FROM cart_items WHERE shopping_cart_id = ?', [cart[0].id]);
 
+        const cartItemsQuery = `
+        SELECT 
+            ci.*, 
+            p.name AS productName, 
+            p.price AS productPrice, 
+            p.sku AS Sku, 
+            i.path AS imagePath
+        FROM 
+            cart_items ci
+        INNER JOIN 
+            products p ON ci.products_id = p.id
+        INNER JOIN 
+            images i ON p.id = i.products_id
+        WHERE 
+            ci.shopping_cart_id = ? 
+            AND i.type = 'featured_image'
+        `;
+
+        // Buscar os itens do carrinho
+        const cartItems = await executeQuery(cartItemsQuery, [cart[0].id]);
+        // console.log(cartItems);
         // Para cada item no carrinho, obter os detalhes do produto associado
         for (const item of cartItems) {
             // Consulta SQL para obter os detalhes do produto
@@ -116,5 +136,5 @@ const getCartByCode = async (req, res) => {
 module.exports = {
     addToCart,
     removeFromCart,
-    getCartByCode
+    getCart
 };

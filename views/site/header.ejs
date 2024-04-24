@@ -1,31 +1,32 @@
-<nav class="navbar navbar-expand-lg navbar-light b-orange">
+<nav class="navbar navbar-expand-lg navbar-light py-3" style="background: #fff;">
     <div class="container">
-        <a href="/" class="navbar-brand" style="color: white !important;">
-            <!-- <img src="images/logo.svg" height="28" alt="CoolBrand"> -->
-            POAC
+        <a href="/" class="navbar-brand c-orange" style="line-height: 0.69rem;">
+            POAC </br>
+            <span style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Marketplace</span>
         </a>
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
-            <div class="navbar-nav">
-                <a href="#" class="nav-item nav-link active text-light">Home</a>
-                <a href="#" class="nav-item nav-link text-light">Produtos</a>
-                <a href="#" class="nav-item nav-link text-light">Sobre</a>
-            </div>
             <div class="col-6 ms-auto">
                 <form class="d-flex">
                     <div class="input-group">                    
-                        <input type="text" class="form-control" placeholder="Pesquisar">
+                        <input type="text" class="form-control" placeholder="Pesquisar" style="background: #f1f1f1;">
                         <button type="button" class="btn btn-secondary"><i class="bi-search"></i></button>
                     </div>
                 </form>
             </div>
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 welcome">
+            <ul class="navbar-nav ms-auto d-flex align-items-center">
                 <% if (user) { %>
+                <li class="nav-item">
+                    <a class="nav-link c-orange" style="font-size: 19px !important;" href="/carrinho">
+                        <i class="bi bi-cart c-orange"></i>
+                    </a>
+                </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Bem-vindo, <%= user.username %>
+                    <a class="nav-link dropdown-toggle c-orange" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <!-- <%= user.username %>  -->
+                        <i class="bi bi-person c-orange" style="font-size: 20px !important;"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="/dashboard"><i class="bi bi-layout-sidebar me-2 c-orange"></i>Meu Painel</a></li>
@@ -34,11 +35,22 @@
                 </li>
                 <% } else { %>
                     <div class="navbar-nav ms-auto">
-                        <a href="/register" class="nav-item nav-link text-light">Registro</a>
-                        <a href="/login" class="nav-item nav-link text-light">Login</a>
+                        <a href="/register" class="nav-item nav-link">Registro</a>
+                        <a href="/login" class="nav-item nav-link">Login</a>
                     </div>
                 <% } %>
             </ul>
+        </div>
+    </div>
+</nav>
+<nav class="navbar navbar-expand-lg navbar-light navbar-sub">
+    <div class="container px-0">
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav">
+                <a href="/" class="nav-item nav-link active ">Home</a>
+                <a href="#" class="nav-item nav-link">Produtos</a>
+                <a href="#" class="nav-item nav-link">Sobre</a>
+            </div>
         </div>
     </div>
 </nav>

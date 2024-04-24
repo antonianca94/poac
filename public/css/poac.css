@@ -297,3 +297,34 @@ p.product-sku {
 .site-footer {
     background: #eaeaea;
 }
+
+.navbar-sub a {
+    color: #fff !important;
+}
+
+.navbar-sub {
+    background: #d96900;
+    padding: 0;
+    border-bottom: 1px solid #d96900;
+    border-top: 1px solid #ffffff8c;
+}
+
+.card.border.shadow-none {
+    margin-top: 1.2rem;
+}
+
+.d-inline-flex.buttons-qty button {
+    border-color: #d96900;
+}
+
+.d-inline-flex.buttons-qty button:hover {
+    background: #d96900;
+}
+
+.d-inline-flex.buttons-qty button:hover i {
+   color: #fff;
+}
+
+.d-inline-flex.buttons-qty button i {
+    color: #d96900;
+}
