@@ -325,6 +325,10 @@ app.post('/adicionar-ao-carrinho', async (req, res, next) => {
 app.get('/carrinho', CartController.getCart);
 // CARRINHO
 
+app.get('/gmail', (req, res) => {
+    res.send('ZqfpCraGDzuJ64Mg2meKYW');
+});
+
 app.listen(PORT, () => {
     console.log(`O servidor está em execução http://localhost:${PORT}`);
 });
