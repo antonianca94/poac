@@ -133,6 +133,30 @@
             </div>
         </div>
     </div>
+    <div class="container mt-5 mb-5 pt-4 pb-4 bg-white">
+        <div class="row">
+            <p class="fs-5 ps-3"><i class="bi bi-patch-plus c-orange"></i> Mais Vendidos </p>
+            <div class="slick-carousel last-products">
+                <% 
+                const sortedProducts = products.sort((a, b) => a.price - b.price);
+                sortedProducts.forEach(product => { %>
+                    <div>
+                        <div class="listing-products m-2">
+                            <a href="/produto/<%= product.sku %>">
+                                <img src="<%= product.imagePath %>" class="card-img-top" alt="<%= product.name %>">
+                            </a>
+                            <div class="card-body">
+                                <a href="/produto/<%= product.sku %>"> <h5 class="card-title"><%= product.name %></h5> </a>
+                                
+                                <p class="c-orange">R$ <%= product.price %></p>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+    
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="/public/js/bootstrap.js"></script>
