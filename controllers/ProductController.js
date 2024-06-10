@@ -1,9 +1,10 @@
 const { executeQuery } = require('../db');
 
 const path = require('path');
-const fs = require('fs');
+const sharp = require('sharp');
+const fs_promisses = require('fs').promises; // Importar o módulo fs com Promises
+const fs = require('fs'); // Importar o módulo fs com Promises
 
-// Função para obter todas as categorias
 const getAllProducts = async (req, res) => {
     try {
         let products;
@@ -25,10 +26,21 @@ const getAllProducts = async (req, res) => {
     }
 };
 
+
+function generateRandomCode(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 const createProduct = async (req, res) => {
     try {
         // Verificar se algum arquivo foi enviado
-        if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+        if (!req.files || req.files.length === 0) {
             return res.status(400).send('Nenhum arquivo foi enviado.');
         }
 
@@ -41,7 +53,6 @@ const createProduct = async (req, res) => {
             return res.status(401).send('Usuário não autenticado');
         }
 
-
         let result;
         try {
             result = await executeQuery('INSERT INTO products (sku, name, price, users_id, quantity, categories_products_id) VALUES (?, ?, ?, ?, ?, ?)', [code, name, price, userId, quantity, categorias]);
@@ -51,12 +62,19 @@ const createProduct = async (req, res) => {
             const serverPath = `${req.protocol}://${serverHost}`;
 
             // Processar os arquivos enviados e inserir na tabela de imagens
-            req.files.forEach(async file => {
-                const name = file.filename;
-                const path = `${serverPath}/uploads/${file.filename}`;
-                const type = file.fieldname;
-                await executeQuery('INSERT INTO images (name, path, type, products_id) VALUES (?, ?, ?, ?)', [name, path, type, result.insertId]);
-            });
+            await Promise.all(req.files.map(async file => {
+                // Converter a imagem para WebP
+                const webpBuffer = await sharp(file.buffer).toFormat('webp').toBuffer();
+
+                // Salvar a imagem no servidor com a extensão WebP
+                const filename = `${generateRandomCode(12)}.webp`;
+                const filepath = path.join(__dirname, '..', 'uploads', filename);
+                await fs_promisses.writeFile(filepath, webpBuffer);
+
+                // Inserir o caminho da imagem convertida na tabela de imagens
+                const imagePath = `${serverPath}/uploads/${filename}`;
+                await executeQuery('INSERT INTO images (name, path, type, products_id) VALUES (?, ?, ?, ?)', [filename, imagePath, file.fieldname, result.insertId]);
+            }));
 
         } catch (error) {
             console.error('Erro ao inserir produto:', error);
@@ -220,7 +238,13 @@ const deleteImage = async (req, res) => {
 
         // Remover o arquivo de imagem do sistema de arquivos
         const imagePath = path.join(__dirname, '..', 'uploads', image.name);
-        fs.unlinkSync(imagePath);
+        try {
+            fs.unlinkSync(imagePath);
+            console.log(`Imagem ${filename} excluída com sucesso`);
+        } catch (error) {
+            console.error('Erro ao excluir imagem:', error);
+            return res.status(500).json({ error: 'Erro ao excluir imagem' });
+        }
 
         // Enviar uma resposta de sucesso ao cliente
         res.status(200).json({ message: 'Imagem excluída com sucesso' });
@@ -229,6 +253,7 @@ const deleteImage = async (req, res) => {
         res.status(500).json({ error: 'Erro ao excluir imagem' });
     }
 };
+
 
 const updateProduct = async (req, res) => {
     const productId = req.params.id;
