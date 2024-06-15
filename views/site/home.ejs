@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
 
 </head>
-<body class="">
+<body class="home">
 
     <%- include('header') %>
 
@@ -119,13 +119,15 @@
                 <% products.forEach(product => { %>
                     <div>
                         <div class="listing-products m-2">
-                            <a href="/produto/<%= product.sku %>">
-                                <img src="<%= product.imagePath %>" class="card-img-top" alt="<%= product.name %>">
-                            </a>
-                            <div class="card-body">
-                                <a href="/produto/<%= product.sku %>"> <h5 class="card-title"><%= product.name %></h5> </a>
-                                
-                                <p class="c-orange">R$ <%= product.price %></p>
+                            <div class="product-image-div">
+                                <a href="/produto/<%= product.sku %>">
+                                    <img src="<%= product.imagePath %>" class="card-img-top" alt="<%= product.name %>">
+                                </a>
+                                <div class="card-body">
+                                    <a href="/produto/<%= product.sku %>"> <h5 class="card-title"><%= product.name %></h5> </a>
+                                    
+                                    <p class="c-orange">R$ <%= product.price %></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -142,13 +144,15 @@
                 sortedProducts.forEach(product => { %>
                     <div>
                         <div class="listing-products m-2">
-                            <a href="/produto/<%= product.sku %>">
-                                <img src="<%= product.imagePath %>" class="card-img-top" alt="<%= product.name %>">
-                            </a>
-                            <div class="card-body">
-                                <a href="/produto/<%= product.sku %>"> <h5 class="card-title"><%= product.name %></h5> </a>
-                                
-                                <p class="c-orange">R$ <%= product.price %></p>
+                            <div class="product-image-div">
+                                <a href="/produto/<%= product.sku %>">
+                                    <img src="<%= product.imagePath %>" class="card-img-top" alt="<%= product.name %>">
+                                </a>
+                                <div class="card-body">
+                                    <a href="/produto/<%= product.sku %>"> <h5 class="card-title"><%= product.name %></h5> </a>
+                                    
+                                    <p class="c-orange">R$ <%= product.price %></p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -197,6 +201,11 @@
                 ]
             });
         });
+
+    $(window).on('load', function() {
+        $('.product-image-div').css('opacity', '1');
+    });
+
 </script>
 
 

@@ -277,12 +277,19 @@ const updateProduct = async (req, res) => {
         const serverPath = `${req.protocol}://${serverHost}`;
 
         // Processar os arquivos enviados e inserir na tabela de imagens
-        req.files.forEach(async file => {
-            const name = file.filename;
-            const path = `${serverPath}/uploads/${file.filename}`;
-            const type = file.fieldname;
-            await executeQuery('INSERT INTO images (name, path, type, products_id) VALUES (?, ?, ?, ?)', [name, path, type, productId]);
-        });
+        await Promise.all(req.files.map(async file => {
+            // Converter a imagem para WebP
+            const webpBuffer = await sharp(file.buffer).toFormat('webp').toBuffer();
+
+            // Salvar a imagem no servidor com a extensão WebP
+            const filename = `${generateRandomCode(12)}.webp`;
+            const filepath = path.join(__dirname, '..', 'uploads', filename);
+            await fs.promises.writeFile(filepath, webpBuffer);
+
+            // Inserir o caminho da imagem convertida na tabela de imagens
+            const imagePath = `${serverPath}/uploads/${filename}`;
+            await executeQuery('INSERT INTO images (name, path, type, products_id) VALUES (?, ?, ?, ?)', [filename, imagePath, file.fieldname, productId]);
+        }));
 
         req.flash('success', 'Produto atualizado com sucesso!');
         res.redirect('/products');
@@ -291,6 +298,7 @@ const updateProduct = async (req, res) => {
         res.status(500).send('Erro ao atualizar produto');
     }
 };
+
 
 const getProductBySKU = async (req, res) => {
     const sku = req.params.sku; // Obter o SKU da URL
