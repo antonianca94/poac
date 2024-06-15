@@ -328,3 +328,8 @@ p.product-sku {
 .d-inline-flex.buttons-qty button i {
     color: #d96900;
 }
+
+body.home .product-image-div {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out; 
+}
