@@ -157,8 +157,67 @@ const getCart = async (req, res) => {
     }
 };
 
+// Incrementar quantidade do item no carrinho
+const incrementCartItem = async (req, res) => {
+    try {
+        const { itemId } = req.body;
+        const userId = req.user.id;
+
+        const cartItemQuery = 'SELECT * FROM cart_items WHERE id = ?';
+        const cartItem = await executeQuery(cartItemQuery, [itemId]);
+
+        if (cartItem.length === 0) {
+            return res.status(404).send('Item não encontrado no carrinho');
+        }
+
+        const productQuery = 'SELECT * FROM products WHERE id = ?';
+        const product = await executeQuery(productQuery, [cartItem[0].products_id]);
+
+        if (cartItem[0].quantity + 1 > product[0].quantity) {
+            return res.status(400).send('Quantidade solicitada excede a quantidade disponível em estoque');
+        }
+
+        const updateItemQuery = 'UPDATE cart_items SET quantity = ? WHERE id = ?';
+        await executeQuery(updateItemQuery, [cartItem[0].quantity + 1, itemId]);
+
+        res.status(200).send('Quantidade incrementada com sucesso!');
+    } catch (error) {
+        console.error('Erro ao incrementar item no carrinho:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+};
+
+// Decrementar quantidade do item no carrinho
+const decrementCartItem = async (req, res) => {
+    try {
+        const { itemId } = req.body;
+        const userId = req.user.id;
+
+        const cartItemQuery = 'SELECT * FROM cart_items WHERE id = ?';
+        const cartItem = await executeQuery(cartItemQuery, [itemId]);
+
+        if (cartItem.length === 0) {
+            return res.status(404).send('Item não encontrado no carrinho');
+        }
+
+        if (cartItem[0].quantity - 1 < 1) {
+            return res.status(400).send('A quantidade mínima é 1');
+        }
+
+        const updateItemQuery = 'UPDATE cart_items SET quantity = ? WHERE id = ?';
+        await executeQuery(updateItemQuery, [cartItem[0].quantity - 1, itemId]);
+
+        res.status(200).send('Quantidade decrementada com sucesso!');
+    } catch (error) {
+        console.error('Erro ao decrementar item no carrinho:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+};
+
 module.exports = {
     addToCart,
     removeFromCart,
-    getCart
+    getCart,
+    incrementCartItem,
+    decrementCartItem
 };
