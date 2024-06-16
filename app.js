@@ -309,6 +309,8 @@ app.post('/adicionar-ao-carrinho', async (req, res, next) => {
 
 // CARRINHO
 app.get('/carrinho', CartController.getCart);
+app.post('/carrinho/increment', CartController.incrementCartItem);
+app.post('/carrinho/decrement', CartController.decrementCartItem);
 // CARRINHO
 
 app.get('/gmail', (req, res) => {

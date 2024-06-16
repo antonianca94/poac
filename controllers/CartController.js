@@ -13,40 +13,58 @@ const generateRandomCode = () => {
 const addToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
-        const userId = req.session.passport.user;
+        const userId = req.user.id;
 
         // Verificar se o usuário está autenticado
         if (!userId) {
             return res.status(401).send('Usuário não autenticado');
         }
 
+        // console.log(`PRODUTO: ${productId}, QUANTIDADE: ${quantity}, USUÁRIO: ${userId}`);
+
         // Verificar se o produto existe e está disponível em estoque
-        const product = await executeQuery('SELECT * FROM products WHERE id = ? AND quantity >= ?', [productId, quantity]);
+        const productQuery = 'SELECT * FROM products WHERE id = ? AND quantity >= ?';
+        const product = await executeQuery(productQuery, [productId, parseInt(quantity)]);
+
         if (product.length === 0) {
             return res.status(404).send('Produto não encontrado ou não disponível em estoque');
         }
 
         // Verificar se o usuário já possui um carrinho de compras
-        let shoppingCart = await executeQuery('SELECT * FROM shopping_cart WHERE users_id = ?', [userId]);
-        
+        const cartQuery = 'SELECT * FROM shopping_cart WHERE users_id = ?';
+        let shoppingCart = await executeQuery(cartQuery, [userId]);
+
         if (shoppingCart.length === 0) {
             const cartCode = generateRandomCode();
 
             // Se o usuário não tiver um carrinho, crie um novo
-            const result = await executeQuery('INSERT INTO shopping_cart (code, created_at, users_id) VALUES (?, NOW(), ?)', [cartCode, userId]);
+            const insertCartQuery = 'INSERT INTO shopping_cart (code, created_at, users_id) VALUES (?, NOW(), ?)';
+            const result = await executeQuery(insertCartQuery, [cartCode, userId]);
             shoppingCart = [{ id: result.insertId, code: cartCode }];
         }
 
         // Verificar se o produto já está no carrinho
-        const cartItem = await executeQuery('SELECT * FROM cart_items WHERE shopping_cart_id = ? AND products_id = ?', [shoppingCart[0].id, productId]);
+        const cartItemQuery = 'SELECT * FROM cart_items WHERE shopping_cart_id = ? AND products_id = ?';
+        const cartItem = await executeQuery(cartItemQuery, [shoppingCart[0].id, productId]);
+        // console.log('PRODUTO_CARRINHO:', cartItem);
 
         if (cartItem.length === 0) {
             // Se o produto não estiver no carrinho, adicione-o
-            await executeQuery('INSERT INTO cart_items (quantity, shopping_cart_id, products_id) VALUES (?, ?, ?)', [quantity, shoppingCart[0].id, productId]);
+            const insertItemQuery = 'INSERT INTO cart_items (quantity, shopping_cart_id, products_id) VALUES (?, ?, ?)';
+            if (parseInt(quantity) > parseInt(product[0].quantity)) {
+                return res.status(400).send('Quantidade solicitada excede a quantidade disponível em estoque');
+            }
+            await executeQuery(insertItemQuery, [parseInt(quantity), shoppingCart[0].id, productId]);
+            // console.log('PRODUTO INSERIDO NO CARRINHO');
         } else {
             // Se o produto já estiver no carrinho, atualize a quantidade
             const newQuantity = parseInt(cartItem[0].quantity) + parseInt(quantity);
-            await executeQuery('UPDATE cart_items SET quantity = ? WHERE id = ?', [newQuantity, cartItem[0].id]);
+            if (newQuantity > parseInt(product[0].quantity)) {
+                return res.status(400).send('Quantidade total solicitada excede a quantidade disponível em estoque');
+            }
+            const updateItemQuery = 'UPDATE cart_items SET quantity = ? WHERE id = ?';
+            await executeQuery(updateItemQuery, [newQuantity, cartItem[0].id]);
+            // console.log('QUANTIDADE DO PRODUTO ATUALIZADA ' +newQuantity);
         }
 
         res.status(200).send('Item adicionado ao carrinho com sucesso!');
@@ -117,7 +135,13 @@ const getCart = async (req, res) => {
             const productQuery = 'SELECT name, price FROM products WHERE id = ?';
             const product = await executeQuery(productQuery, [item.products_id]);
             item.productName = product.length > 0 ? product[0].name : 'Produto não encontrado'; // Adiciona o nome do produto ao item do carrinho
-            item.productPrice = product.length > 0 ? product[0].price : 0; // Adiciona o preço do produto ao item do carrinho
+            item.productPrice = product.length > 0 ? parseFloat(product[0].price) : 0; // Adiciona o preço do produto ao item do carrinho
+            item.totalPrice = item.productPrice * item.quantity;
+
+            // Formatar os valores monetários para o formato brasileiro (Real)
+            item.productPriceFormatted = item.productPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            item.totalPriceFormatted = item.totalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
         }
 
         res.render('site/cart/index', { 
@@ -133,8 +157,67 @@ const getCart = async (req, res) => {
     }
 };
 
+// Incrementar quantidade do item no carrinho
+const incrementCartItem = async (req, res) => {
+    try {
+        const { itemId } = req.body;
+        const userId = req.user.id;
+
+        const cartItemQuery = 'SELECT * FROM cart_items WHERE id = ?';
+        const cartItem = await executeQuery(cartItemQuery, [itemId]);
+
+        if (cartItem.length === 0) {
+            return res.status(404).send('Item não encontrado no carrinho');
+        }
+
+        const productQuery = 'SELECT * FROM products WHERE id = ?';
+        const product = await executeQuery(productQuery, [cartItem[0].products_id]);
+
+        if (cartItem[0].quantity + 1 > product[0].quantity) {
+            return res.status(400).send('Quantidade solicitada excede a quantidade disponível em estoque');
+        }
+
+        const updateItemQuery = 'UPDATE cart_items SET quantity = ? WHERE id = ?';
+        await executeQuery(updateItemQuery, [cartItem[0].quantity + 1, itemId]);
+
+        res.status(200).send('Quantidade incrementada com sucesso!');
+    } catch (error) {
+        console.error('Erro ao incrementar item no carrinho:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+};
+
+// Decrementar quantidade do item no carrinho
+const decrementCartItem = async (req, res) => {
+    try {
+        const { itemId } = req.body;
+        const userId = req.user.id;
+
+        const cartItemQuery = 'SELECT * FROM cart_items WHERE id = ?';
+        const cartItem = await executeQuery(cartItemQuery, [itemId]);
+
+        if (cartItem.length === 0) {
+            return res.status(404).send('Item não encontrado no carrinho');
+        }
+
+        if (cartItem[0].quantity - 1 < 1) {
+            return res.status(400).send('A quantidade mínima é 1');
+        }
+
+        const updateItemQuery = 'UPDATE cart_items SET quantity = ? WHERE id = ?';
+        await executeQuery(updateItemQuery, [cartItem[0].quantity - 1, itemId]);
+
+        res.status(200).send('Quantidade decrementada com sucesso!');
+    } catch (error) {
+        console.error('Erro ao decrementar item no carrinho:', error);
+        res.status(500).send('Erro interno do servidor');
+    }
+};
+
 module.exports = {
     addToCart,
     removeFromCart,
-    getCart
+    getCart,
+    incrementCartItem,
+    decrementCartItem
 };
