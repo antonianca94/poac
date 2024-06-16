@@ -13,7 +13,7 @@ const generateRandomCode = () => {
 const addToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
-        const userId = req.session.passport.user;
+        const userId = req.user.id;
 
         // Verificar se o usuário está autenticado
         if (!userId) {
@@ -117,7 +117,13 @@ const getCart = async (req, res) => {
             const productQuery = 'SELECT name, price FROM products WHERE id = ?';
             const product = await executeQuery(productQuery, [item.products_id]);
             item.productName = product.length > 0 ? product[0].name : 'Produto não encontrado'; // Adiciona o nome do produto ao item do carrinho
-            item.productPrice = product.length > 0 ? product[0].price : 0; // Adiciona o preço do produto ao item do carrinho
+            item.productPrice = product.length > 0 ? parseFloat(product[0].price) : 0; // Adiciona o preço do produto ao item do carrinho
+            item.totalPrice = item.productPrice * item.quantity;
+
+            // Formatar os valores monetários para o formato brasileiro (Real)
+            item.productPriceFormatted = item.productPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            item.totalPriceFormatted = item.totalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
         }
 
         res.render('site/cart/index', { 
