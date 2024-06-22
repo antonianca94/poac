@@ -92,11 +92,8 @@ const removeFromCart = async (req, res) => {
 };
 
 const getCart = async (req, res) => {
-
-
     const user = req.user; // Obter o usuário autenticado, se estiver disponível
     try {
-        const cartCode = req.params.code;
         const userId = req.user.id;
 
         // Buscar o carrinho no banco de dados usando o código fornecido
@@ -106,7 +103,6 @@ const getCart = async (req, res) => {
         if (cart.length === 0) {
             return res.status(404).send('Carrinho não encontrado');
         }
-
 
         const cartItemsQuery = `
         SELECT 
@@ -128,7 +124,10 @@ const getCart = async (req, res) => {
 
         // Buscar os itens do carrinho
         const cartItems = await executeQuery(cartItemsQuery, [cart[0].id]);
-        // console.log(cartItems);
+
+        // Calcular o total do carrinho
+        let cartTotal = 0;
+
         // Para cada item no carrinho, obter os detalhes do produto associado
         for (const item of cartItems) {
             // Consulta SQL para obter os detalhes do produto
@@ -142,12 +141,18 @@ const getCart = async (req, res) => {
             item.productPriceFormatted = item.productPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             item.totalPriceFormatted = item.totalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
+            // Somar ao total do carrinho
+            cartTotal += item.totalPrice;
         }
+
+        // Formatar o total do carrinho para o formato brasileiro (Real)
+        const cartTotalFormatted = cartTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         res.render('site/cart/index', { 
             pageTitle: 'Carrinho', 
             cart: cart[0], // Passa o carrinho como contexto para o template
             cartItems: cartItems,
+            cartTotalFormatted: cartTotalFormatted,
             user
         });
 
@@ -157,11 +162,20 @@ const getCart = async (req, res) => {
     }
 };
 
-// Incrementar quantidade do item no carrinho
+
+
+const calculateCartTotal = async (cartId) => {
+    const cartItems = await executeQuery('SELECT ci.quantity, p.price FROM cart_items ci INNER JOIN products p ON ci.products_id = p.id WHERE ci.shopping_cart_id = ?', [cartId]);
+    let cartTotal = 0;
+    cartItems.forEach(item => {
+        cartTotal += item.quantity * item.price;
+    });
+    return cartTotal;
+};
+
 const incrementCartItem = async (req, res) => {
     try {
         const { itemId } = req.body;
-        const userId = req.user.id;
 
         const cartItemQuery = 'SELECT * FROM cart_items WHERE id = ?';
         const cartItem = await executeQuery(cartItemQuery, [itemId]);
@@ -177,21 +191,27 @@ const incrementCartItem = async (req, res) => {
             return res.status(400).send('Quantidade solicitada excede a quantidade disponível em estoque');
         }
 
+        const newQuantity = cartItem[0].quantity + 1;
         const updateItemQuery = 'UPDATE cart_items SET quantity = ? WHERE id = ?';
-        await executeQuery(updateItemQuery, [cartItem[0].quantity + 1, itemId]);
+        await executeQuery(updateItemQuery, [newQuantity, itemId]);
 
-        res.status(200).send('Quantidade incrementada com sucesso!');
+        const newTotalPrice = newQuantity * product[0].price;
+        const cartTotal = await calculateCartTotal(cartItem[0].shopping_cart_id);
+
+        res.send({
+            newQuantity,
+            newTotalPriceFormatted: newTotalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+            cartTotalFormatted: cartTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+        });
     } catch (error) {
         console.error('Erro ao incrementar item no carrinho:', error);
         res.status(500).send('Erro interno do servidor');
     }
 };
 
-// Decrementar quantidade do item no carrinho
 const decrementCartItem = async (req, res) => {
     try {
         const { itemId } = req.body;
-        const userId = req.user.id;
 
         const cartItemQuery = 'SELECT * FROM cart_items WHERE id = ?';
         const cartItem = await executeQuery(cartItemQuery, [itemId]);
@@ -204,10 +224,21 @@ const decrementCartItem = async (req, res) => {
             return res.status(400).send('A quantidade mínima é 1');
         }
 
+        const newQuantity = cartItem[0].quantity - 1;
         const updateItemQuery = 'UPDATE cart_items SET quantity = ? WHERE id = ?';
-        await executeQuery(updateItemQuery, [cartItem[0].quantity - 1, itemId]);
+        await executeQuery(updateItemQuery, [newQuantity, itemId]);
 
-        res.status(200).send('Quantidade decrementada com sucesso!');
+        const productQuery = 'SELECT * FROM products WHERE id = ?';
+        const product = await executeQuery(productQuery, [cartItem[0].products_id]);
+
+        const newTotalPrice = newQuantity * product[0].price;
+        const cartTotal = await calculateCartTotal(cartItem[0].shopping_cart_id);
+
+        res.send({
+            newQuantity,
+            newTotalPriceFormatted: newTotalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+            cartTotalFormatted: cartTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+        });
     } catch (error) {
         console.error('Erro ao decrementar item no carrinho:', error);
         res.status(500).send('Erro interno do servidor');
@@ -219,5 +250,6 @@ module.exports = {
     removeFromCart,
     getCart,
     incrementCartItem,
-    decrementCartItem
+    decrementCartItem,
+    calculateCartTotal
 };

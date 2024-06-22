@@ -23,7 +23,7 @@
     <div class="container pt-3 mb-5 mt-5">
         <div class="row">
             <div class="col-xxl-9">
-                <h4 class="mb-3 cart-title">Carrinho</h4>
+                <h4 class="mb-3 cart-title"> <i class="bi bi-cart c-orange me-2"></i> Carrinho</h4>
                 
                 <% cartItems.forEach(item => { %>
                     <div class="card border shadow-none" data-item-id="<%= item.id %>">
@@ -93,11 +93,13 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td></td>
+                                <td id="cart-total">Subtotal <span class="c-orange"><%= cartTotalFormatted %></span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+                <button type="button" id="FinalizeButton" class="btn btn-primary mt-3 mb-3">Finalizar Compra</button>
+
             </div>
         </div>
     </div>
@@ -111,23 +113,30 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 <script>
-    function updateQuantity(itemId, action) {
+function updateQuantity(itemId, action, button) {
         $.ajax({
             url: `/carrinho/${action}`,
             method: 'POST',
             data: { itemId: itemId },
             success: function(response) {
                 location.reload();
+                const card = $(button).closest('.card');
+                const quantityInput = card.find('.quantity-input');
+                const totalPriceElement = card.find('.total-price');
+                const cartTotalElement = $('#cart-total');
+                quantityInput.val(response.newQuantity);
+                totalPriceElement.text(response.newTotalPriceFormatted);
+                cartTotalElement.text('Total: ' + response.cartTotalFormatted);
             },
-            error: function(xhr, status, error) {
+            error: function(error) {
                 Swal.fire({
                     icon: 'info',
                     title: 'Aviso Importante',
-                    text: xhr.responseText,
+                    text: error.responseText,
                 });
             }
         });
-    }
+}
 </script>
 
 <%- include('../footer') %>
